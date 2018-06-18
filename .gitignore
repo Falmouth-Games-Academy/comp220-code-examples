@@ -328,3 +328,6 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Force inclusion of everything under Libraries (including binaries)
+!Libraries/**
