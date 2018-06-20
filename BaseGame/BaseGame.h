@@ -8,6 +8,7 @@
 
 #include "ProgramOptions.h"
 
+//Struct to make it easier to pass around values for our Window
 struct WindowDesc
 {
 	int WindowWidth;
