@@ -25,6 +25,7 @@ struct WindowDesc
 	}
 };
 
+//Base Game Class
 class BaseGame
 {
 public:
