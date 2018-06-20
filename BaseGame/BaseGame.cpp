@@ -31,8 +31,14 @@ bool BaseGame::Init(int argc, char ** argsv)
 		//We failed then we can only use BMPs
 		std::cout << "Can't load in PNG and JPG support, we can use BMPs " << IMG_GetError() << std::endl;
 	}
+	
+	ParseConfigFile();
 	ParseCommandLineArgs(argc, argsv);
-	if (!CreateWindow(1240, 720, "BaseGame", false))
+
+	WindowDescription.WindowTitle = Options.GetOption("title");
+
+
+	if (!CreateWindow(WindowDescription))
 		return false;
 
 	if (!CreateRenderer())
@@ -43,15 +49,15 @@ bool BaseGame::Init(int argc, char ** argsv)
 	return true;
 }
 
-bool BaseGame::CreateWindow(int width, int height, const std::string & title, bool fullScreen)
+bool BaseGame::CreateWindow(WindowDesc &desc)
 {
 	//Create a winodw, with a title and dimensions specfied. The last value is the flags, which we will revisit
 	Uint32 flags = SDL_WINDOW_SHOWN;
-	if (fullScreen)
+	if (desc.FullScreenWindow)
 	{
 		flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN;
 	}
-	Window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+	Window = SDL_CreateWindow(desc.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desc.WindowWidth, desc.WindowHeight, flags);
 	//Check to see if the window has been created
 	if (Window == nullptr)
 	{
@@ -78,6 +84,20 @@ bool BaseGame::CreateRenderer()
 
 void BaseGame::ParseCommandLineArgs(int argc, char ** argsv)
 {
+	// start at one as the exe is the first arg!
+	for (int i = 1; i < argc; i++)
+	{
+		std::string optionValuePair = argsv[i];
+		int delminatorPos = optionValuePair.find("=");
+		std::string optionName = optionValuePair.substr(0, delminatorPos - 1);
+		std::string optionValue = optionValuePair.substr(delminatorPos);
+		Options.AddOption(optionName, optionValue);
+	}
+}
+
+void BaseGame::ParseConfigFile()
+{
+	Options.ParseConfigFile("config.ini");
 }
 
 void BaseGame::Shutdown()

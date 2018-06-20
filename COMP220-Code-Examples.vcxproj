@@ -156,10 +156,16 @@ xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame\BaseGame.cpp" />
+    <ClCompile Include="BaseGame\ProgramOptions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
+    <ClInclude Include="BaseGame\INIReader.h" />
+    <ClInclude Include="BaseGame\ProgramOptions.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

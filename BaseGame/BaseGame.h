@@ -4,7 +4,25 @@
 #include <SDL_image.h>
 #include <string>
 #include <iostream>
+#include <sstream>
 
+#include "ProgramOptions.h"
+
+struct WindowDesc
+{
+	int WindowWidth;
+	int WindowHeight;
+	bool FullScreenWindow;
+	std::string WindowTitle;
+
+	WindowDesc()
+	{
+		WindowWidth = 1280;
+		WindowHeight = 720;
+		FullScreenWindow = false;
+		WindowTitle = "Lab2";
+	}
+};
 
 class BaseGame
 {
@@ -27,12 +45,15 @@ public:
 		return Running;
 	};
 private:
-	bool CreateWindow(int width, int height, const std::string& title, bool fullScreen);
+	bool CreateWindow(WindowDesc &desc);
 	bool CreateRenderer();
 	void ParseCommandLineArgs(int argc, char ** argsv);
+	void ParseConfigFile();
 protected:
 	SDL_Window * Window;
 	SDL_Renderer * Renderer;
 	SDL_Event CurrentEvent;
 	bool Running;
+	ProgramOptions Options;
+	WindowDesc WindowDescription;
 };

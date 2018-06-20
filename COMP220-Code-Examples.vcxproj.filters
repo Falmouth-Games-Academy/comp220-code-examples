@@ -24,10 +24,22 @@
     <ClCompile Include="BaseGame\BaseGame.cpp">
       <Filter>BaseGame</Filter>
     </ClCompile>
+    <ClCompile Include="BaseGame\ProgramOptions.cpp">
+      <Filter>BaseGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h">
       <Filter>BaseGame</Filter>
     </ClInclude>
+    <ClInclude Include="BaseGame\INIReader.h">
+      <Filter>BaseGame</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGame\ProgramOptions.h">
+      <Filter>BaseGame</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.ini" />
   </ItemGroup>
 </Project>
