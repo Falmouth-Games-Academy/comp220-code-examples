@@ -4,7 +4,6 @@
 BaseGame::BaseGame()
 {
 	Window = nullptr;
-	Renderer = nullptr;
 	Running = false;
 }
 
@@ -73,15 +72,6 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 
 bool BaseGame::CreateRenderer()
 {
-	//Create Hardware Renderer
-	Renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_SOFTWARE);
-
-	if (Renderer == nullptr)
-	{
-		std::cout << "Can't create renderer " << SDL_GetError() << std::endl;
-		Shutdown();
-		return false;
-	}
 	return true;
 }
 
@@ -105,8 +95,6 @@ void BaseGame::ParseConfigFile()
 
 void BaseGame::Shutdown()
 {
-	//Destroy Renderer
-	SDL_DestroyRenderer(Renderer);
 	//Destroy the Window
 	SDL_DestroyWindow(Window);
 	//Quit Image
@@ -121,11 +109,6 @@ void BaseGame::Update(float updateTime)
 
 void BaseGame::Render()
 {
-	SDL_SetRenderDrawColor(Renderer, 255, 0, 0, 255);
-	SDL_RenderClear(Renderer);
-
-
-	SDL_RenderPresent(Renderer);
 }
 
 void BaseGame::Run()

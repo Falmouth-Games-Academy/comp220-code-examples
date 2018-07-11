@@ -53,7 +53,6 @@ private:
 	void ParseConfigFile();
 protected:
 	SDL_Window * Window;
-	SDL_Renderer * Renderer;
 	SDL_Event CurrentEvent;
 	bool Running;
 	ProgramOptions Options;
