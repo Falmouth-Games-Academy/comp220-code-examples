@@ -163,7 +163,6 @@ xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Comma
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
-    <ClInclude Include="BaseGame\INIReader.h" />
     <ClInclude Include="BaseGame\ProgramOptions.h" />
     <ClInclude Include="Renderer\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />

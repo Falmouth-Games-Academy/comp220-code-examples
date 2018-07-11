@@ -2,9 +2,18 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
-#include "INIReader.h"
+struct ConfigSection
+{
+	std::string Name;
+	std::map<std::string, std::string> Options;
+};
 
+struct ConfigFile
+{
+
+};
 class ProgramOptions
 {
 public:
@@ -23,5 +32,5 @@ public:
 	void ParseConfigFile(const std::string& config);
 private:
 	std::map<std::string, std::string> Options;
-	INIReader ConfigFile;
+	std::vector<std::string> Sections;
 };

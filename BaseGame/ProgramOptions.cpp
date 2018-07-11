@@ -22,15 +22,6 @@ const std::string ProgramOptions::GetOption(const std::string & option)
 	}
 	else
 	{
-		//return from config file
-		for (std::string sectionName : ConfigFile.Sections())
-		{
-			std::string val= ConfigFile.Get(sectionName, option, "");
-			if (!val.empty())
-				return val;
-			else
-				return "";
-		}
 	}
 }
 
@@ -38,7 +29,7 @@ bool ProgramOptions::GetOptionAsBool(const std::string& option)
 {
 	std::string optionValue = GetOption(option);
 	// Convert to lower case to make string comparisons case-insensitive
-	std::transform(optionValue.begin(), optionValue.end(), optionValue.begin(), ::tolower);
+	//std::transform(optionValue.begin(), optionValue.end(), optionValue.begin(), ::tolower);
 	if (optionValue == "true" || optionValue == "yes" || optionValue == "on" || optionValue == "1")
 		return true;
 	else if (optionValue == "false" || optionValue == "no" || optionValue == "off" || optionValue == "0")
@@ -69,5 +60,4 @@ bool ProgramOptions::OptionExists(const std::string & option)
 
 void ProgramOptions::ParseConfigFile(const std::string& config)
 {
-	ConfigFile = INIReader(config);
 }

@@ -38,9 +38,6 @@
     <ClInclude Include="BaseGame\BaseGame.h">
       <Filter>BaseGame</Filter>
     </ClInclude>
-    <ClInclude Include="BaseGame\INIReader.h">
-      <Filter>BaseGame</Filter>
-    </ClInclude>
     <ClInclude Include="BaseGame\ProgramOptions.h">
       <Filter>BaseGame</Filter>
     </ClInclude>
