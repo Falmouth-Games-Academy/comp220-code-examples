@@ -157,12 +157,14 @@ xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame\BaseGame.cpp" />
+    <ClCompile Include="BaseGame\ConfigFile.cpp" />
     <ClCompile Include="BaseGame\ProgramOptions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer\OpenGLRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
+    <ClInclude Include="BaseGame\ConfigFile.h" />
     <ClInclude Include="BaseGame\ProgramOptions.h" />
     <ClInclude Include="Renderer\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />

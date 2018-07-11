@@ -33,6 +33,9 @@
     <ClCompile Include="Renderer\OpenGLRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="BaseGame\ConfigFile.cpp">
+      <Filter>BaseGame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="Renderer\OpenGLRenderer.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGame\ConfigFile.h">
+      <Filter>BaseGame</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
