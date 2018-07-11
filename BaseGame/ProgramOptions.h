@@ -13,6 +13,8 @@ public:
 
 	void AddOption(std::string& option, std::string& value);
 	const std::string GetOption(const std::string& option);
+	bool GetOptionAsBool(const std::string& option);
+	int GetOptionAsInt(const std::string& option);
 
 	void ChangeOption(std::string& option, std::string& value);
 

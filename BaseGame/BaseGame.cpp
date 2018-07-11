@@ -35,8 +35,11 @@ bool BaseGame::Init(int argc, char ** argsv)
 	ParseConfigFile();
 	ParseCommandLineArgs(argc, argsv);
 
+	//Grab standard options
 	WindowDescription.WindowTitle = Options.GetOption("title");
-
+	WindowDescription.FullScreenWindow = Options.GetOptionAsBool("fullscreen");
+	WindowDescription.WindowHeight = Options.GetOptionAsInt("height");
+	WindowDescription.WindowWidth = Options.GetOptionAsInt("width");
 
 	if (!CreateWindow(WindowDescription))
 		return false;
@@ -71,7 +74,7 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 bool BaseGame::CreateRenderer()
 {
 	//Create Hardware Renderer
-	Renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_ACCELERATED);
+	Renderer = SDL_CreateRenderer(Window, -1, SDL_RENDERER_SOFTWARE);
 
 	if (Renderer == nullptr)
 	{
