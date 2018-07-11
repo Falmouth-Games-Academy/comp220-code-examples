@@ -16,6 +16,9 @@
     <Filter Include="BaseGame">
       <UniqueIdentifier>{0f7de085-95b0-4b91-9dbf-772ece290c1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{3a959f35-21fb-48e8-b0a2-f43bbcb3ab4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,6 +30,9 @@
     <ClCompile Include="BaseGame\ProgramOptions.cpp">
       <Filter>BaseGame</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\OpenGLRenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h">
@@ -37,6 +43,12 @@
     </ClInclude>
     <ClInclude Include="BaseGame\ProgramOptions.h">
       <Filter>BaseGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Renderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLRenderer.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

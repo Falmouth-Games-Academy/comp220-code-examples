@@ -105,16 +105,17 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>Libraries\SDL2_image-2.0.1\include;Libraries\SDL2-2.0.6\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Libraries\SDL2_image-2.0.1\include;Libraries\glew-2.1.0\include;Libraries\SDL2-2.0.6\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Libraries\SDL2_image-2.0.1\lib\x64;Libraries\SDL2-2.0.6\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Libraries\glew-2.1.0\lib\Release\x64;Libraries\SDL2_image-2.0.1\lib\x64;Libraries\SDL2-2.0.6\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy Libraries\SDL2-2.0.6\lib\x64\SDL2.dll "$(OutDir)\SDL2.dll"
+      <Command>copy Libraries\glew-2.1.0\bin\Release\x64\glew32.dll "$(OutDir)\glew32.dll"
+copy Libraries\SDL2-2.0.6\lib\x64\SDL2.dll "$(OutDir)\SDL2.dll"
 xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -158,11 +159,14 @@ xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Comma
     <ClCompile Include="BaseGame\BaseGame.cpp" />
     <ClCompile Include="BaseGame\ProgramOptions.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Renderer\OpenGLRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
     <ClInclude Include="BaseGame\INIReader.h" />
     <ClInclude Include="BaseGame\ProgramOptions.h" />
+    <ClInclude Include="Renderer\OpenGLRenderer.h" />
+    <ClInclude Include="Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.ini" />

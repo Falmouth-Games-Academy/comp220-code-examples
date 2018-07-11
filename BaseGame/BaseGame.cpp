@@ -4,6 +4,7 @@
 BaseGame::BaseGame()
 {
 	Window = nullptr;
+	Renderer = nullptr;
 	Running = false;
 }
 
@@ -40,6 +41,10 @@ bool BaseGame::Init(int argc, char ** argsv)
 	WindowDescription.WindowHeight = Options.GetOptionAsInt("height");
 	WindowDescription.WindowWidth = Options.GetOptionAsInt("width");
 
+	RendererDescription.Type = Options.GetOption("type");
+	RendererDescription.BackBufferWidth = WindowDescription.WindowWidth;
+	RendererDescription.BackBufferHeight = WindowDescription.WindowHeight;
+
 	if (!CreateWindow(WindowDescription))
 		return false;
 
@@ -57,8 +62,14 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 	Uint32 flags = SDL_WINDOW_SHOWN;
 	if (desc.FullScreenWindow)
 	{
-		flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;
 	}
+	
+	if (RendererDescription.Type == "OpenGL")
+	{
+		flags |= SDL_WINDOW_OPENGL;
+	}
+
 	Window = SDL_CreateWindow(desc.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desc.WindowWidth, desc.WindowHeight, flags);
 	//Check to see if the window has been created
 	if (Window == nullptr)
@@ -72,6 +83,15 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 
 bool BaseGame::CreateRenderer()
 {
+	if (RendererDescription.Type == "OpenGL")
+	{
+		Renderer = new OpenGLRender();
+	}
+
+	if (Renderer != nullptr)
+	{
+		Renderer->Create(RendererDescription, Window);
+	}
 	return true;
 }
 
@@ -95,6 +115,11 @@ void BaseGame::ParseConfigFile()
 
 void BaseGame::Shutdown()
 {
+	if (Renderer)
+	{
+		delete Renderer;
+		Renderer = nullptr;
+	}
 	//Destroy the Window
 	SDL_DestroyWindow(Window);
 	//Quit Image

@@ -6,6 +6,9 @@
 #include <iostream>
 #include <sstream>
 
+#include "..\Renderer\Renderer.h"
+#include "..\Renderer\OpenGLRenderer.h"
+
 #include "ProgramOptions.h"
 
 //Struct to make it easier to pass around values for our Window
@@ -57,4 +60,6 @@ protected:
 	bool Running;
 	ProgramOptions Options;
 	WindowDesc WindowDescription;
+	RendererDesc RendererDescription;
+	IRenderer * Renderer;
 };
