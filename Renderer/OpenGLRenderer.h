@@ -1,26 +1,34 @@
 #pragma once
 
 #include "Renderer.h"
+#include <iostream>
 
+//Structure to Hold OGL versions
 struct OpenGLVersion
 {
 	int MajorVersion;
 	int MinorVersion;
 
+	//Array of all supported OGL versions
 	const static OpenGLVersion SupportedOpenGLVersions[];
 };
 
+//OpenGL Renderer which implements the IRenderer Interface
 class OpenGLRender :public IRenderer
 {
 public:
 	OpenGLRender();
 	~OpenGLRender();
 
-	bool Create(RendererDesc &desc, SDL_Window * window);
+	//Create the Renderer
+	bool Create(RendererDesc &desc, SDL_Window * window) override;
 
-	void Clear(int r, int g, int b);
-	void Begin();
-	void End();
+	//Clear the current buffer
+	void Clear(float r, float g, float b) override;
+	//Begin Renderering
+	void Begin() override;
+	//End Endererering
+	void End() override;
 private:
 	SDL_GLContext Context;
 	SDL_Window * Window;

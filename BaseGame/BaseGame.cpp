@@ -35,19 +35,21 @@ bool BaseGame::Init(int argc, char ** argsv)
 	ParseConfigFile();
 	ParseCommandLineArgs(argc, argsv);
 
-	//Grab standard options
-	WindowDescription.WindowTitle = Options.GetOption("title");
-	WindowDescription.FullScreenWindow = Options.GetOptionAsBool("fullscreen");
-	WindowDescription.WindowHeight = Options.GetOptionAsInt("height");
-	WindowDescription.WindowWidth = Options.GetOptionAsInt("width");
+	//Grab standard options from our Config class
+	WindowDescription.WindowTitle = ConfigOptions.GetOption("window", "title", "Game");
+	WindowDescription.FullScreenWindow = ConfigOptions.GetOptionAsBool("window","fullscreen",false);
+	WindowDescription.WindowHeight = ConfigOptions.GetOptionAsInt("window","height",1080);
+	WindowDescription.WindowWidth = ConfigOptions.GetOptionAsInt("window","width",1960);
 
-	RendererDescription.Type = Options.GetOption("type");
+	RendererDescription.Type = ConfigOptions.GetOption("renderer","type","OpenGL");
 	RendererDescription.BackBufferWidth = WindowDescription.WindowWidth;
 	RendererDescription.BackBufferHeight = WindowDescription.WindowHeight;
 
+	//Create the Window
 	if (!CreateWindow(WindowDescription))
 		return false;
 
+	//Create the Renderer
 	if (!CreateRenderer())
 		return false;
 
@@ -70,6 +72,7 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 		flags |= SDL_WINDOW_OPENGL;
 	}
 
+	//Create an SDL window with the passed in options
 	Window = SDL_CreateWindow(desc.WindowTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desc.WindowWidth, desc.WindowHeight, flags);
 	//Check to see if the window has been created
 	if (Window == nullptr)
@@ -83,11 +86,13 @@ bool BaseGame::CreateWindow(WindowDesc &desc)
 
 bool BaseGame::CreateRenderer()
 {
+	//Are we going to create an OpenGL Renderer
 	if (RendererDescription.Type == "OpenGL")
 	{
 		Renderer = new OpenGLRender();
 	}
 
+	//Check for errors in initialisation and create Renderer
 	if (Renderer != nullptr)
 	{
 		Renderer->Create(RendererDescription, Window);
@@ -97,24 +102,17 @@ bool BaseGame::CreateRenderer()
 
 void BaseGame::ParseCommandLineArgs(int argc, char ** argsv)
 {
-	// start at one as the exe is the first arg!
-	for (int i = 1; i < argc; i++)
-	{
-		std::string optionValuePair = argsv[i];
-		int delminatorPos = optionValuePair.find("=");
-		std::string optionName = optionValuePair.substr(0, delminatorPos - 1);
-		std::string optionValue = optionValuePair.substr(delminatorPos);
-		Options.AddOption(optionName, optionValue);
-	}
+	ConfigOptions.ParseCommandLine(argc, argsv);
 }
 
 void BaseGame::ParseConfigFile()
 {
-	Options.ParseConfigFile("config.ini");
+	ConfigOptions.ParseFile("config.ini");
 }
 
 void BaseGame::Shutdown()
 {
+	//Delete everything in reverse order of initialisation
 	if (Renderer)
 	{
 		delete Renderer;
@@ -134,6 +132,10 @@ void BaseGame::Update(float updateTime)
 
 void BaseGame::Render()
 {
+	//Clear and begin rendering
+	Renderer->Clear(1.0f, 0.0f, 1.0f);
+	Renderer->Begin();
+	Renderer->End();
 }
 
 void BaseGame::Run()
@@ -155,10 +157,13 @@ void BaseGame::Run()
 			}
 		}
 
+		///Process user Input
 		ProcessInput();
 
+		//Update Game
 		Update(0.0f);
 
+		//Render Game
 		Render();
 	}
 }

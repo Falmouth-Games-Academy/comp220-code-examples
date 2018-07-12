@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>Libraries\glew-2.1.0\lib\Release\x64;Libraries\SDL2_image-2.0.1\lib\x64;Libraries\SDL2-2.0.6\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy Libraries\glew-2.1.0\bin\Release\x64\glew32.dll "$(OutDir)\glew32.dll"
@@ -157,15 +157,13 @@ xcopy /Y /D /I Libraries\SDL2_image-2.0.1\lib\x64\*.dll "$(OutDir)\*.dll"</Comma
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame\BaseGame.cpp" />
-    <ClCompile Include="BaseGame\ConfigFile.cpp" />
-    <ClCompile Include="BaseGame\ProgramOptions.cpp" />
+    <ClCompile Include="BaseGame\Config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderer\OpenGLRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
-    <ClInclude Include="BaseGame\ConfigFile.h" />
-    <ClInclude Include="BaseGame\ProgramOptions.h" />
+    <ClInclude Include="BaseGame\Config.h" />
     <ClInclude Include="Renderer\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
   </ItemGroup>

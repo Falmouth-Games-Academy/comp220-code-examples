@@ -27,21 +27,15 @@
     <ClCompile Include="BaseGame\BaseGame.cpp">
       <Filter>BaseGame</Filter>
     </ClCompile>
-    <ClCompile Include="BaseGame\ProgramOptions.cpp">
-      <Filter>BaseGame</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\OpenGLRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="BaseGame\ConfigFile.cpp">
+    <ClCompile Include="BaseGame\Config.cpp">
       <Filter>BaseGame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h">
-      <Filter>BaseGame</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseGame\ProgramOptions.h">
       <Filter>BaseGame</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Renderer.h">
@@ -50,7 +44,7 @@
     <ClInclude Include="Renderer\OpenGLRenderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="BaseGame\ConfigFile.h">
+    <ClInclude Include="BaseGame\Config.h">
       <Filter>BaseGame</Filter>
     </ClInclude>
   </ItemGroup>

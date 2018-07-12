@@ -6,10 +6,10 @@
 #include <iostream>
 #include <sstream>
 
+#include "Config.h"
+
 #include "..\Renderer\Renderer.h"
 #include "..\Renderer\OpenGLRenderer.h"
-
-#include "ProgramOptions.h"
 
 //Struct to make it easier to pass around values for our Window
 struct WindowDesc
@@ -35,31 +35,42 @@ public:
 	BaseGame();
 	virtual ~BaseGame();
 
+	//Init the game, we are passing in command line arguments to change the options of the game
 	virtual bool Init(int argc, char ** argsv);
+	//Called when we shutdown
 	virtual void Shutdown();
 
+	//Run the game
 	void Run();
 
+	//Process User Input
 	void ProcessInput();
 
+	//Update the current game state
 	virtual void Update(float updateTime);
+	//Render the current game state
 	virtual void Render();
 
+	//Check to see if the game is running
 	bool IsRunning()
 	{
 		return Running;
 	};
 private:
+	//Create a Window
 	bool CreateWindow(WindowDesc &desc);
+	//Create a Renderer
 	bool CreateRenderer();
+	//Parse Command line arguments
 	void ParseCommandLineArgs(int argc, char ** argsv);
+	//Parse Config file
 	void ParseConfigFile();
 protected:
 	SDL_Window * Window;
 	SDL_Event CurrentEvent;
 	bool Running;
-	ProgramOptions Options;
 	WindowDesc WindowDescription;
 	RendererDesc RendererDescription;
 	IRenderer * Renderer;
+	Config ConfigOptions;
 };
