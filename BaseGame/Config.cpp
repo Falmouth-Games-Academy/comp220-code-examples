@@ -41,13 +41,13 @@ bool Config::ParseCommandLine(int argc, char ** argsv)
 		std::string optionValuePair = argsv[i];
 		int delminatorPos = optionValuePair.find('=');
 		
-		std::string sectionOptionPair = optionValuePair.substr(0, delminatorPos - 1);
+		std::string sectionOptionPair = optionValuePair.substr(0, delminatorPos);
 
 		int sectionDelimPos = sectionOptionPair.find('-');
-		std::string sectionName = sectionOptionPair.substr(0, sectionDelimPos - 1);
-		std::string optionName = sectionOptionPair.substr(sectionDelimPos + 1, sectionOptionPair.length() - 1);
+		std::string sectionName = sectionOptionPair.substr(0, sectionDelimPos);
+		std::string optionName = sectionOptionPair.substr(sectionDelimPos + 1, sectionOptionPair.length());
 
-		std::string optionValue = optionValuePair.substr(delminatorPos);
+		std::string optionValue = optionValuePair.substr(delminatorPos+1);
 
 		AddOption(sectionName, optionName, optionValue);
 	}
