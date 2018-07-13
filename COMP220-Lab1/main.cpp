@@ -1,9 +1,10 @@
 #include <iostream>
-#include "BaseGame\BaseGame.h"
+
+#include "Lab1Game.h"
 
 int main(int argc, char ** argsv)
 {
-	BaseGame * MyGame = new BaseGame();
+	BaseGame * MyGame = new Lab1Game();
 
 	if (!MyGame->Init(argc,argsv))
 	{

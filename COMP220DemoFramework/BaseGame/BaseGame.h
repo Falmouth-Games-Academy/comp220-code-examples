@@ -51,6 +51,8 @@ public:
 	//Render the current game state
 	virtual void Render();
 
+	virtual void InitScene();
+
 	//Check to see if the game is running
 	bool IsRunning()
 	{

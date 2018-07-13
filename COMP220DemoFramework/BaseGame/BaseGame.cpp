@@ -172,4 +172,9 @@ void BaseGame::ProcessInput()
 {
 }
 
+void BaseGame::InitScene()
+{
+
+}
+
 
