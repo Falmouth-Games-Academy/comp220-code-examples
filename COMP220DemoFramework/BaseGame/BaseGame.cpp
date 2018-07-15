@@ -97,6 +97,12 @@ bool BaseGame::CreateRenderer()
 	{
 		Renderer->Create(RendererDescription, Window);
 	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplSdlGL3_Init(Window, 0);
+
 	return true;
 }
 
@@ -112,6 +118,7 @@ void BaseGame::ParseConfigFile()
 
 void BaseGame::Shutdown()
 {
+	ImGui_ImplSdlGL3_Shutdown();
 	//Delete everything in reverse order of initialisation
 	if (Renderer)
 	{
@@ -132,9 +139,25 @@ void BaseGame::Update(float updateTime)
 
 void BaseGame::Render()
 {
+	bool show = true;
+
+	ImGui_ImplSdlGL3_NewFrame(Window);
+	
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(WindowDescription.WindowWidth, WindowDescription.WindowHeight));
+	ImGui::SetNextWindowBgAlpha(0.0f);
+
+	//ImGui::Begin("BCKGND", NULL, ImGui::GetIO().DisplaySize, 0, 0f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus);
+	ImGui::Begin("Debug", &show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus);
+	ImGui::Text("Hello World");
+	ImGui::End();
+
+	ImGui::Render();
+
 	//Clear and begin rendering
 	Renderer->Clear(1.0f, 0.0f, 1.0f);
 	Renderer->Begin();
+	ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 	Renderer->End();
 }
 
@@ -145,6 +168,7 @@ void BaseGame::Run()
 		//SDL Event pump, keep Polling while we have events to handle
 		while (SDL_PollEvent(&CurrentEvent))
 		{
+			ImGui_ImplSdlGL3_ProcessEvent(&CurrentEvent);
 			//Check the type of event
 			switch (CurrentEvent.type)
 			{

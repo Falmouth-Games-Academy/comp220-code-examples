@@ -11,6 +11,9 @@
 #include "..\Renderer\Renderer.h"
 #include "..\Renderer\OpenGLRenderer.h"
 
+#include "IMGUI\imgui.h"
+#include "IMGUI\imgui_impl_sdl_gl3.h"
+
 //Struct to make it easier to pass around values for our Window
 struct WindowDesc
 {
