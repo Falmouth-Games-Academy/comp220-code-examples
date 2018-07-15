@@ -53,6 +53,8 @@ bool BaseGame::Init(int argc, char ** argsv)
 	if (!CreateRenderer())
 		return false;
 
+	MainTimer.Start();
+
 	Running = true;
 
 	return true;
@@ -146,10 +148,8 @@ void BaseGame::Render()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(WindowDescription.WindowWidth, WindowDescription.WindowHeight));
 	ImGui::SetNextWindowBgAlpha(0.0f);
-
-	//ImGui::Begin("BCKGND", NULL, ImGui::GetIO().DisplaySize, 0, 0f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus);
 	ImGui::Begin("Debug", &show, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus);
-	ImGui::Text("Hello World");
+	ImGui::Text("%.2f",(1.0f/MainTimer.GetDeltaTime()));
 	ImGui::End();
 
 	ImGui::Render();
@@ -181,11 +181,12 @@ void BaseGame::Run()
 			}
 		}
 
+		MainTimer.Update();
 		///Process user Input
 		ProcessInput();
 
 		//Update Game
-		Update(0.0f);
+		Update(MainTimer.GetDeltaTime());
 
 		//Render Game
 		Render();

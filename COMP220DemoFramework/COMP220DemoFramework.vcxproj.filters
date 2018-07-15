@@ -37,6 +37,9 @@
     <ClCompile Include="BaseGame\IMGUI\imgui_impl_sdl_gl3.cpp">
       <Filter>IMGUI</Filter>
     </ClCompile>
+    <ClCompile Include="BaseGame\Timer.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="BaseGame\IMGUI\stb_truetype.h">
       <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGame\Timer.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

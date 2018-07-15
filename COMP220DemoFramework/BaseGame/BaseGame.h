@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "Config.h"
+#include "Timer.h"
 
 #include "..\Renderer\Renderer.h"
 #include "..\Renderer\OpenGLRenderer.h"
@@ -28,7 +29,7 @@ struct WindowDesc
 		WindowHeight = 720;
 		FullScreenWindow = false;
 		WindowTitle = "Lab2";
-	}
+	};
 };
 
 //Base Game Class
@@ -78,4 +79,6 @@ protected:
 	RendererDesc RendererDescription;
 	IRenderer * Renderer;
 	Config ConfigOptions;
+	Timer MainTimer;
+
 };

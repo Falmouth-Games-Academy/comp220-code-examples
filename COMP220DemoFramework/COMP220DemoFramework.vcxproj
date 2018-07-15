@@ -25,6 +25,7 @@
     <ClCompile Include="BaseGame\IMGUI\imgui_demo.cpp" />
     <ClCompile Include="BaseGame\IMGUI\imgui_draw.cpp" />
     <ClCompile Include="BaseGame\IMGUI\imgui_impl_sdl_gl3.cpp" />
+    <ClCompile Include="BaseGame\Timer.cpp" />
     <ClCompile Include="Renderer\OpenGLRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +38,7 @@
     <ClInclude Include="BaseGame\IMGUI\stb_rect_pack.h" />
     <ClInclude Include="BaseGame\IMGUI\stb_textedit.h" />
     <ClInclude Include="BaseGame\IMGUI\stb_truetype.h" />
+    <ClInclude Include="BaseGame\Timer.h" />
     <ClInclude Include="Renderer\OpenGLRenderer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
   </ItemGroup>
