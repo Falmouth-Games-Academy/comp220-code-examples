@@ -1,4 +1,6 @@
 #include "OpenGLRenderer.h"
+#include "OpenGLVertexBuffer.h"
+
 #include <SDL_opengl.h>
 #include <SDL.h>
 #include <GL\glew.h>
@@ -103,4 +105,20 @@ void OpenGLRender::Begin()
 void OpenGLRender::End()
 {
 	SDL_GL_SwapWindow(Window);
+}
+
+IVertexBuffer * OpenGLRender::CreateAndFillVertexBuffer(void ** data, int size)
+{
+	//Create an OpenGL Buffer and fill it with data
+	OpenGLVertexBuffer * vertexBuffer = new OpenGLVertexBuffer();
+	vertexBuffer->CreateAndFill(data, size);
+	return vertexBuffer;
+}
+
+IVertexBuffer * OpenGLRender::CreateVertexBuffer(int size)
+{
+	//Create an OpenGL Buffer
+	OpenGLVertexBuffer * vertexBuffer = new OpenGLVertexBuffer();
+	vertexBuffer->Create(size);
+	return vertexBuffer;
 }

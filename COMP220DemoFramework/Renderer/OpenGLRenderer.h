@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer.h"
+#include "OpenGLVertexBuffer.h"
 #include <iostream>
 
 //Structure to Hold OGL versions
@@ -29,6 +30,9 @@ public:
 	void Begin() override;
 	//End Endererering
 	void End() override;
+
+	IVertexBuffer * CreateAndFillVertexBuffer(void ** data, int size) override;
+	IVertexBuffer * CreateVertexBuffer(int size) override;
 private:
 	SDL_GLContext Context;
 	SDL_Window * Window;

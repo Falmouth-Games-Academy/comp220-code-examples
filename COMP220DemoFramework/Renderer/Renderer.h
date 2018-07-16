@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <GL/glew.h>
 #include <string>
+#include "VertexBuffer.h"
 
 //Structure to make it easier to describe a renderer
 struct RendererDesc
@@ -28,4 +29,10 @@ public:
 	virtual void Begin() = 0;
 	//end rendering
 	virtual void End() = 0;
+
+	//Create and fill a vertex buffer, please note, you will have to destory the buffer
+	virtual IVertexBuffer * CreateAndFillVertexBuffer(void ** data, int size)=0;
+	//Create a vertex buffer, please note, you will have to destory the  buffer
+	virtual IVertexBuffer * CreateVertexBuffer(int size) = 0;
+
 };
