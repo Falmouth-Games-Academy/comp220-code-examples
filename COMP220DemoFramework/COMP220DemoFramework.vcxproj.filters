@@ -87,5 +87,8 @@
     <ClInclude Include="Renderer\OpenGLVertexBuffer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\VertexLayout.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

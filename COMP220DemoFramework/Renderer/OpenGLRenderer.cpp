@@ -122,3 +122,6 @@ IVertexBuffer * OpenGLRender::CreateVertexBuffer(int size)
 	vertexBuffer->Create(size);
 	return vertexBuffer;
 }
+
+
+GL_FLOAT
