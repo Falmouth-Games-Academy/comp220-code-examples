@@ -14,6 +14,9 @@
     <Filter Include="IMGUI">
       <UniqueIdentifier>{801185a1-fa19-4b61-bbff-b6f6c38ba8df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderer\OpenGL">
+      <UniqueIdentifier>{3c33ce06-2a9e-441c-be09-099aa146ef63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame\BaseGame.cpp">
@@ -21,9 +24,6 @@
     </ClCompile>
     <ClCompile Include="BaseGame\Config.cpp">
       <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\OpenGLRenderer.cpp">
-      <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="BaseGame\IMGUI\imgui.cpp">
       <Filter>IMGUI</Filter>
@@ -40,8 +40,20 @@
     <ClCompile Include="BaseGame\Timer.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\OpenGLRenderer.cpp">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Renderer\OpenGLVertexBuffer.cpp">
-      <Filter>Renderer</Filter>
+      <Filter>Renderer\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\OpenGLVertexLayout.cpp">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\OpenGLShader.cpp">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\OpenGLShaderProgram.cpp">
+      <Filter>Renderer\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="BaseGame\Config.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\OpenGLRenderer.h">
-      <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Renderer.h">
       <Filter>Renderer</Filter>
@@ -84,11 +93,29 @@
     <ClInclude Include="Renderer\VertexBuffer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\OpenGLVertexBuffer.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\VertexLayout.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLRenderer.h">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLVertexBuffer.h">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLVertexLayout.h">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Shader.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLShader.h">
+      <Filter>Renderer\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ShaderProgram.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\OpenGLShaderProgram.h">
+      <Filter>Renderer\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

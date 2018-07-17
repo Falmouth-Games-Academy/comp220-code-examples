@@ -27,7 +27,10 @@
     <ClCompile Include="BaseGame\IMGUI\imgui_impl_sdl_gl3.cpp" />
     <ClCompile Include="BaseGame\Timer.cpp" />
     <ClCompile Include="Renderer\OpenGLRenderer.cpp" />
+    <ClCompile Include="Renderer\OpenGLShader.cpp" />
+    <ClCompile Include="Renderer\OpenGLShaderProgram.cpp" />
     <ClCompile Include="Renderer\OpenGLVertexBuffer.cpp" />
+    <ClCompile Include="Renderer\OpenGLVertexLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGame\BaseGame.h" />
@@ -41,8 +44,13 @@
     <ClInclude Include="BaseGame\IMGUI\stb_truetype.h" />
     <ClInclude Include="BaseGame\Timer.h" />
     <ClInclude Include="Renderer\OpenGLRenderer.h" />
+    <ClInclude Include="Renderer\OpenGLShader.h" />
+    <ClInclude Include="Renderer\OpenGLShaderProgram.h" />
     <ClInclude Include="Renderer\OpenGLVertexBuffer.h" />
+    <ClInclude Include="Renderer\OpenGLVertexLayout.h" />
     <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Renderer\Shader.h" />
+    <ClInclude Include="Renderer\ShaderProgram.h" />
     <ClInclude Include="Renderer\VertexBuffer.h" />
     <ClInclude Include="Renderer\VertexLayout.h" />
   </ItemGroup>

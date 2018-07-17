@@ -21,10 +21,19 @@ struct VertexDesc
 	int offset;
 };
 
+class IVertexBuffer;
+
 class IVertexLayout
 {
 public:
 	virtual ~IVertexLayout() {};
 
+	virtual void CreateFromDescription(VertexDesc * desc, int numberOfElements)=0;
 
+	virtual void BindVertexBuffer(IVertexBuffer * buffer)=0;
+
+	virtual void Bind() = 0;
+	virtual void UnBind() = 0;
+
+	virtual void Destroy() = 0;
 };
