@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <GL\glew.h>
 #include <SDL_opengl.h>
+#include "Shaders.h"
 
 int main(int argc, char ** argsv)
 {
@@ -78,6 +79,9 @@ int main(int argc, char ** argsv)
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+	// Create and compile our GLSL program from the shaders
+	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
+
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
 	//SDL Event structure, this will be checked in the while loop
@@ -108,8 +112,10 @@ int main(int argc, char ** argsv)
 			}
 		}
 		//Do rendering here!
-		glClearColor(1.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glUseProgram(programID);
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -122,6 +128,7 @@ int main(int argc, char ** argsv)
 			0,                  // stride
 			(void*)0            // array buffer offset
 		);
+
 		// Draw the triangle !
 		glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
 		glDisableVertexAttribArray(0);
@@ -131,6 +138,7 @@ int main(int argc, char ** argsv)
 
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);
 	//Destroy the window and quit SDL2, NB we should do this after all cleanup in this order!!!
