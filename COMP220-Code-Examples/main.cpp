@@ -2,6 +2,12 @@
 #include <SDL.h>
 #include <GL\glew.h>
 #include <SDL_opengl.h>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm\glm.hpp>
+#include <glm\gtx\transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
+
 #include "Shaders.h"
 
 int main(int argc, char ** argsv)
@@ -82,6 +88,37 @@ int main(int argc, char ** argsv)
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
 
+	//Set up positions for position, rotation and scale
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+
+	//calculate the translation, rotation and scale matrices using the above vectores
+	glm::mat4 translationMatrix = glm::translate(position);
+	glm::mat4 rotationMatrix = glm::rotate(rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
+		*glm::rotate(rotation.y, glm::vec3(0.0f, 1.0f, 0.0f))
+		*glm::rotate(rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::mat4 scaleMatrix = glm::scale(scale);
+	
+	//combine the above matrices into the model matrix (order is important!!!! - TRS)
+	glm::mat4 modelMatrix = translationMatrix*rotationMatrix*scaleMatrix;
+
+	//Set up vectors for our camera position
+	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
+	glm::vec3 cameraLook = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	//Calculate the view matrix
+	glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraLook, cameraUp);
+	//Calculate our perspective matrix
+	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)640, 0.1f, 100.0f);
+
+	//Get the uniforms from the shader
+	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
+	GLuint viewMatrixUniformLocation = glGetUniformLocation(programID, "viewMatrix");
+	GLuint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
+
+
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
 	//SDL Event structure, this will be checked in the while loop
@@ -128,6 +165,11 @@ int main(int argc, char ** argsv)
 			0,                  // stride
 			(void*)0            // array buffer offset
 		);
+
+		//send the uniforms across
+		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 		// Draw the triangle !
 		glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
