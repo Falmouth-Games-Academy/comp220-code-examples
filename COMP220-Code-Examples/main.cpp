@@ -9,6 +9,7 @@
 #include <glm\gtc\type_ptr.hpp>
 
 #include "Shaders.h"
+#include "Vertex.h"
 
 int main(int argc, char ** argsv)
 {
@@ -65,16 +66,25 @@ int main(int argc, char ** argsv)
 		return 1;
 	}
 
+	// An array of 3 vectors which represents 3 vertices
+	static const Vertex v[] = {
+		{ -0.5f,-0.5f,0.0f,1.0f,0.0f,0.0f,1.0f },
+		{ 0.5f,-0.5f,0.0f,0.0f,1.0f,0.0f,1.0f },
+		{ 0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f },
+		{ -0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f }
+	};
+
+	static const unsigned int indices[] =
+	{
+		0,1,2,
+		2,0,3
+	};
+
+
+
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
-
-	// An array of 3 vectors which represents 3 vertices
-	static const GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f,
-	};
 
 	// This will identify our vertex buffer
 	GLuint vertexbuffer;
@@ -83,7 +93,34 @@ int main(int argc, char ** argsv)
 	// The following commands will talk about our 'vertexbuffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4*sizeof(Vertex), v, GL_STATIC_DRAW);
+
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(int), indices, GL_STATIC_DRAW);
+
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		sizeof(Vertex),                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	// 1rst attribute buffer : colours
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		4,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		sizeof(Vertex),                  // stride
+		(void*)(3*sizeof(float))            // array buffer offset
+	);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
@@ -154,17 +191,7 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
-		// 1rst attribute buffer : vertices
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
-		);
+		glBindVertexArray(VertexArrayID);
 
 		//send the uniforms across
 		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -172,9 +199,8 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
 		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray(0);
-
+		//glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 		SDL_GL_SwapWindow(window);
 	}
 
