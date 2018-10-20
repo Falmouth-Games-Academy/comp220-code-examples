@@ -10,6 +10,7 @@
 
 #include "Shaders.h"
 #include "Vertex.h"
+#include "Texture.h"
 
 int main(int argc, char ** argsv)
 {
@@ -67,11 +68,12 @@ int main(int argc, char ** argsv)
 	}
 
 	// An array of 3 vectors which represents 3 vertices
-	static const Vertex v[] = {
-		{ -0.5f,-0.5f,0.0f,1.0f,0.0f,0.0f,1.0f },
-		{ 0.5f,-0.5f,0.0f,0.0f,1.0f,0.0f,1.0f },
-		{ 0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f },
-		{ -0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f }
+	Vertex v[] =
+	{
+		{ -0.5f,-0.5f,0.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f },
+		{ 0.5f,-0.5f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,0.0f },
+		{ 0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f },
+		{ -0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f ,0.0f,1.0f }
 	};
 
 	static const unsigned int indices[] =
@@ -111,7 +113,7 @@ int main(int argc, char ** argsv)
 		(void*)0            // array buffer offset
 	);
 
-	// 1rst attribute buffer : colours
+	// 1st attribute buffer : colours
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(
 		1,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
@@ -121,10 +123,20 @@ int main(int argc, char ** argsv)
 		sizeof(Vertex),                  // stride
 		(void*)(3*sizeof(float))            // array buffer offset
 	);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, 
+		2, 
+		GL_FLOAT, 
+		GL_FALSE, 
+		sizeof(Vertex), 
+		(void*)(7 * sizeof(float))
+	);
+
+	GLuint textureID = loadTextureFromFile("Crate.jpg");
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
-
+	GLuint programID = LoadShaders("texturedVert.glsl", "texturedFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -154,7 +166,7 @@ int main(int argc, char ** argsv)
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
 	GLuint viewMatrixUniformLocation = glGetUniformLocation(programID, "viewMatrix");
 	GLuint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
-
+	GLint baseTextureLocation = glGetUniformLocation(programID, "baseTexture");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -191,12 +203,16 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
 		glBindVertexArray(VertexArrayID);
 
 		//send the uniforms across
 		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+		glUniform1i(baseTextureLocation, 0);
 
 		// Draw the triangle !
 		//glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
@@ -205,7 +221,9 @@ int main(int argc, char ** argsv)
 	}
 
 	glDeleteBuffers(1, &vertexbuffer);
+	glDeleteBuffers(1, &elementbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteTextures(1, &textureID);
 	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);

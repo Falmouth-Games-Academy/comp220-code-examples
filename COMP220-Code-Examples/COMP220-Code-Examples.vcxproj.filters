@@ -21,6 +21,9 @@
     <ClCompile Include="Shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shaders.h">
@@ -29,9 +32,14 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vert.glsl" />
     <None Include="frag.glsl" />
+    <None Include="texturedFrag.glsl" />
+    <None Include="texturedVert.glsl" />
   </ItemGroup>
 </Project>

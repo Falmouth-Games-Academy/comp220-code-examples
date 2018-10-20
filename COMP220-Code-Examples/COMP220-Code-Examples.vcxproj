@@ -23,7 +23,7 @@
     <ProjectGuid>{EEC72970-DB35-46A5-A4D4-3C36D0CB3791}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>COMP220CodeExamples</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -109,17 +109,17 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.1\lib\x64\*.dll "</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Libraries\glm;..\Libraries\SDL2_image-2.0.1\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.6\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\glm;..\Libraries\SDL2_image-2.0.3\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.8\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>OpenGL32.lib;glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Libraries\glew-2.1.0\lib\Release\x64;..\Libraries\SDL2_image-2.0.3\lib\x64;..\Libraries\SDL2-2.0.6\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Libraries\glew-2.1.0\lib\Release\x64;..\Libraries\SDL2_image-2.0.3\lib\x64;..\Libraries\SDL2-2.0.8\lib\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy ..\Libraries\glew-2.1.0\bin\Release\x64\glew32.dll "$(OutDir)\glew32.dll"
-copy ..\Libraries\SDL2-2.0.6\lib\x64\SDL2.dll "$(OutDir)\SDL2.dll"
+copy ..\Libraries\SDL2-2.0.8\lib\x64\SDL2.dll "$(OutDir)\SDL2.dll"
 xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.3\lib\x64\*.dll "$(OutDir)\*.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -158,15 +158,19 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.3\lib\x64\*.dll "$(OutDir)\*.dll"</Co
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shaders.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="frag.glsl">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
+    <None Include="texturedFrag.glsl" />
+    <None Include="texturedVert.glsl" />
     <None Include="vert.glsl">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
