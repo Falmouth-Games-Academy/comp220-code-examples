@@ -7,8 +7,7 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filename, aiProcessPreset_TargetRealtime_Fast);
-
+	const aiScene* scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace);
 	if (!scene)
 	{
 		printf("Model Loading Error - %s\n", importer.GetErrorString());
@@ -22,8 +21,19 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 		for (int v = 0; v < currentMesh->mNumVertices; v++)
 		{
 			aiVector3D currentModelVertex = currentMesh->mVertices[v];
+			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
+			aiVector3D currentTextureCoordinates = aiVector3D(0.0f,0.0f,0.0f);
 
-			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,1.0f,1.0f,1.0f,1.0f };
+			if (currentMesh->HasVertexColors(0)) {
+				currentModelColour = currentMesh->mColors[0][v];
+			}
+			if (currentMesh->HasTextureCoords(0))
+			{
+				currentTextureCoordinates = currentMesh->mTextureCoords[0][v];
+			}
+			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
+				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
+				currentTextureCoordinates.x,currentTextureCoordinates.y};
 
 			vertices.push_back(currentVertex);
 		}

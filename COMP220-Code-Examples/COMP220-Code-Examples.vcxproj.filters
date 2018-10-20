@@ -47,5 +47,6 @@
     <None Include="frag.glsl" />
     <None Include="texturedFrag.glsl" />
     <None Include="texturedVert.glsl" />
+    <None Include="sphere.nff" />
   </ItemGroup>
 </Project>

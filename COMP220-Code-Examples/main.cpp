@@ -11,6 +11,7 @@
 #include "Shaders.h"
 #include "Vertex.h"
 #include "Texture.h"
+#include "Model.h"
 
 int main(int argc, char ** argsv)
 {
@@ -67,23 +68,6 @@ int main(int argc, char ** argsv)
 		return 1;
 	}
 
-	// An array of 3 vectors which represents 3 vertices
-	Vertex v[] =
-	{
-		{ -0.5f,-0.5f,0.0f,1.0f,0.0f,0.0f,1.0f,0.0f,0.0f },
-		{ 0.5f,-0.5f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,0.0f },
-		{ 0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f,1.0f,1.0f },
-		{ -0.5f,0.5f,0.0f,0.0f,0.0f,1.0f,1.0f ,0.0f,1.0f }
-	};
-
-	static const unsigned int indices[] =
-	{
-		0,1,2,
-		2,0,3
-	};
-
-
-
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -94,13 +78,15 @@ int main(int argc, char ** argsv)
 	glGenBuffers(1, &vertexbuffer);
 	// The following commands will talk about our 'vertexbuffer' buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	// Give our vertices to OpenGL.
-	glBufferData(GL_ARRAY_BUFFER, 4*sizeof(Vertex), v, GL_STATIC_DRAW);
 
 	GLuint elementbuffer;
 	glGenBuffers(1, &elementbuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(int), indices, GL_STATIC_DRAW);
+
+	unsigned int numberOfVerts = 0;
+	unsigned int numberOfIndices = 0;
+
+	loadModelFromFile("sphere.nff", vertexbuffer, elementbuffer, numberOfVerts, numberOfIndices);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -133,10 +119,10 @@ int main(int argc, char ** argsv)
 		(void*)(7 * sizeof(float))
 	);
 
-	GLuint textureID = loadTextureFromFile("Crate.jpg");
+	GLuint textureID = loadTextureFromFile("Tank1DF.png");
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("texturedVert.glsl", "texturedFrag.glsl");
+	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -214,9 +200,7 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniform1i(baseTextureLocation, 0);
 
-		// Draw the triangle !
-		//glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+		glDrawElements(GL_TRIANGLES, numberOfIndices, GL_UNSIGNED_INT, (void*)0);
 		SDL_GL_SwapWindow(window);
 	}
 
