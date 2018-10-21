@@ -68,6 +68,8 @@ int main(int argc, char ** argsv)
 		return 1;
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
@@ -86,7 +88,7 @@ int main(int argc, char ** argsv)
 	unsigned int numberOfVerts = 0;
 	unsigned int numberOfIndices = 0;
 
-	loadModelFromFile("sphere.nff", vertexbuffer, elementbuffer, numberOfVerts, numberOfIndices);
+	loadModelFromFile("Tank1.FBX", vertexbuffer, elementbuffer, numberOfVerts, numberOfIndices);
 
 	// 1rst attribute buffer : vertices
 	glEnableVertexAttribArray(0);
@@ -122,10 +124,10 @@ int main(int argc, char ** argsv)
 	GLuint textureID = loadTextureFromFile("Tank1DF.png");
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("vert.glsl", "frag.glsl");
+	GLuint programID = LoadShaders("texturedVert.glsl", "texturedFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f,glm::radians(90.0f), 0.0f);
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	//calculate the translation, rotation and scale matrices using the above vectores
@@ -139,7 +141,7 @@ int main(int argc, char ** argsv)
 	glm::mat4 modelMatrix = translationMatrix*rotationMatrix*scaleMatrix;
 
 	//Set up vectors for our camera position
-	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
+	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
 	glm::vec3 cameraLook = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -189,8 +191,8 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, textureID);
 
 		glBindVertexArray(VertexArrayID);
 
@@ -207,7 +209,7 @@ int main(int argc, char ** argsv)
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &elementbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
-	glDeleteTextures(1, &textureID);
+	//glDeleteTextures(1, &textureID);
 	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);

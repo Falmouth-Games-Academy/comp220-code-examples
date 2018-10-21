@@ -7,7 +7,7 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filename, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(filename,aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace);
 	if (!scene)
 	{
 		printf("Model Loading Error - %s\n", importer.GetErrorString());
@@ -24,7 +24,8 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 			aiVector3D currentTextureCoordinates = aiVector3D(0.0f,0.0f,0.0f);
 
-			if (currentMesh->HasVertexColors(0)) {
+			if (currentMesh->HasVertexColors(0)) 
+			{
 				currentModelColour = currentMesh->mColors[0][v];
 			}
 			if (currentMesh->HasTextureCoords(0))
