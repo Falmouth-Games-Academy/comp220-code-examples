@@ -191,8 +191,8 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, textureID);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
 
 		glBindVertexArray(VertexArrayID);
 
@@ -209,7 +209,7 @@ int main(int argc, char ** argsv)
 	glDeleteBuffers(1, &vertexbuffer);
 	glDeleteBuffers(1, &elementbuffer);
 	glDeleteVertexArrays(1, &VertexArrayID);
-	//glDeleteTextures(1, &textureID);
+	glDeleteTextures(1, &textureID);
 	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);
