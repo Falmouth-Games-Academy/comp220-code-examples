@@ -108,6 +108,7 @@ int main(int argc, char ** argsv)
 	//Light properties
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glm::vec3 lightDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
@@ -115,6 +116,8 @@ int main(int argc, char ** argsv)
 	//Material Properties
 	glm::vec4 ambientMaterialColour = glm::vec4(0.5f, 0.0f, 0.0f, 1.0f);
 	glm::vec4 diffuseMaterialColour = glm::vec4(0.8f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 specularMaterialColour= glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	float specularMaterialPower = 25.0f;
 
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
@@ -124,12 +127,16 @@ int main(int argc, char ** argsv)
 
 	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
 	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
+	GLint specularLightColourLocation = glGetUniformLocation(programID, "specularLightColour");
 
 	GLint lightDirectionLocation= glGetUniformLocation(programID, "lightDirection");
+	GLint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 
 
 	GLint ambientMaterialColourLocation= glGetUniformLocation(programID, "ambientMaterialColour");
 	GLint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
+	GLint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
+	GLint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
 
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
@@ -199,14 +206,18 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniform1i(baseTextureLocation, 0);
+
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
+		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
 		
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
 		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
+		glUniform4fv(specularLightColourLocation, 1, glm::value_ptr(specularLightColour));
+		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
 
 		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
-
+		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
 		teapotMesh->render();
 
