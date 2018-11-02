@@ -81,7 +81,7 @@ int main(int argc, char ** argsv)
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("texturedVert.glsl", "texturedFrag.glsl");
 	//Set up positions for position, rotation and scale
-	glm::vec3 position = glm::vec3(0.0f, -8.0f, -30.0f);
+	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
