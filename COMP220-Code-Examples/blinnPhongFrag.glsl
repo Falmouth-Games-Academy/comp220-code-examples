@@ -7,7 +7,8 @@ in vec3 viewDirection;
 
 out vec4 colour;
 
-uniform sampler2D baseTexture;
+uniform sampler2D diffuseTexture;
+uniform sampler2D specularTexture;
 
 uniform vec4 ambientLightColour;
 uniform vec4 diffuseLightColour;
@@ -29,6 +30,9 @@ void main()
 	vec3 halfWay=normalize(lightDirection+viewDirection);
 	float nDoth=pow(dot(vertexNormalsOut,halfWay),specularMaterialPower);
 
-	
-	colour=(ambientLightColour*ambientMaterialColour)+(diffuseLightColour*nDotl*diffuseMaterialColour)+(specularLightColour*nDoth*specularMaterialColour);
+	vec4 diffuseTextureColour=texture(diffuseTexture,vertexTextureCoordOut);
+
+	vec4 specularTextureColour=texture(specularTexture,vertexTextureCoordOut);
+
+	colour=(ambientLightColour*ambientMaterialColour)+(diffuseLightColour*nDotl*diffuseMaterialColour*diffuseTextureColour)+(specularLightColour*nDoth*specularMaterialColour*specularTextureColour);
 }

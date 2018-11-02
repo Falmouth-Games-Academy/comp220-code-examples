@@ -76,7 +76,8 @@ int main(int argc, char ** argsv)
 	loadMeshFromFile("utah-teapot.fbx", teapotMesh);
 
 
-	GLuint textureID = loadTextureFromFile("Tank1DF.png");
+	GLuint diffuseTextureID = loadTextureFromFile("Tank1DF.png");
+	GLuint specularTextureID = loadTextureFromFile("specMap.png");
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("blinnPhongVert.glsl", "blinnPhongFrag.glsl");
@@ -123,7 +124,9 @@ int main(int argc, char ** argsv)
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
 	GLuint viewMatrixUniformLocation = glGetUniformLocation(programID, "viewMatrix");
 	GLuint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
-	GLint baseTextureLocation = glGetUniformLocation(programID, "baseTexture");
+	GLint diffuseTextureLocation = glGetUniformLocation(programID, "diffuseTexture");
+	GLint specularTextureLocation = glGetUniformLocation(programID, "specularTexture");
+
 
 	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
 	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
@@ -198,14 +201,17 @@ int main(int argc, char ** argsv)
 		glUseProgram(programID);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		glBindTexture(GL_TEXTURE_2D, diffuseTextureID);
 
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specularTextureID);
 
 		//send the uniforms across
 		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-		glUniform1i(baseTextureLocation, 0);
+		glUniform1i(diffuseTextureLocation, 0);
+		glUniform1i(specularTextureLocation, 1);
 
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
@@ -228,7 +234,8 @@ int main(int argc, char ** argsv)
 		delete teapotMesh;
 		teapotMesh = nullptr;
 	}
-	glDeleteTextures(1, &textureID);
+	glDeleteTextures(1, &diffuseTextureID);
+	glDeleteTextures(1, &specularTextureID);
 	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);
