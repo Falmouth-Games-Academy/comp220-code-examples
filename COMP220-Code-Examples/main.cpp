@@ -129,10 +129,10 @@ int main(int argc, char ** argsv)
 
 
 	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
-	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
-	GLint specularLightColourLocation = glGetUniformLocation(programID, "specularLightColour");
+	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
+	GLint specularLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
 
-	GLint lightDirectionLocation= glGetUniformLocation(programID, "lightDirection");
+	GLint lightDirectionLocation= glGetUniformLocation(programID, "directionalLight.direction");
 	GLint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 
 
