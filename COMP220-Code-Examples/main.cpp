@@ -107,10 +107,14 @@ int main(int argc, char ** argsv)
 
 	//Light properties
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	glm::vec3 lightDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
 
 	//Material Properties
-	glm::vec4 ambientMaterialColour = glm::vec4(0.3f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.5f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.8f, 0.0f, 0.0f, 1.0f);
 
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
@@ -119,7 +123,14 @@ int main(int argc, char ** argsv)
 	GLint baseTextureLocation = glGetUniformLocation(programID, "baseTexture");
 
 	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
+	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
+
+	GLint lightDirectionLocation= glGetUniformLocation(programID, "lightDirection");
+
+
 	GLint ambientMaterialColourLocation= glGetUniformLocation(programID, "ambientMaterialColour");
+	GLint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
+
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -153,6 +164,12 @@ int main(int argc, char ** argsv)
 				case SDLK_d:
 					rotation.y += 0.1f;
 					break;
+				case SDLK_w:
+					rotation.x -= 0.1f;
+					break;
+				case SDLK_s:
+					rotation.x += 0.1f;
+					break;
 				}
 			}
 		}
@@ -183,8 +200,12 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniform1i(baseTextureLocation, 0);
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
+		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
 		
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
+		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
+
+		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
 
 
 		teapotMesh->render();

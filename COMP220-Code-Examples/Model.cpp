@@ -23,6 +23,7 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			aiVector3D currentModelVertex = currentMesh->mVertices[v];
 			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 			aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelNormals = aiVector3D(0.0f, 0.0f, 0.0f);
 
 			if (currentMesh->HasVertexColors(0))
 			{
@@ -32,9 +33,14 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			{
 				currentTextureCoordinates = currentMesh->mTextureCoords[0][v];
 			}
+			if (currentMesh->HasNormals())
+			{
+				currentModelNormals=currentMesh->mNormals[v];
+			}
 			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
-				currentTextureCoordinates.x,currentTextureCoordinates.y };
+				currentTextureCoordinates.x,currentTextureCoordinates.y,
+				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z};
 
 			vertices.push_back(currentVertex);
 		}
@@ -87,6 +93,7 @@ bool loadMeshFromFile(const std::string & filename, MeshCollection * pMeshCollec
 			aiVector3D currentModelVertex = currentMesh->mVertices[v];
 			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 			aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelNormals = aiVector3D(0.0f, 0.0f, 0.0f);
 
 			if (currentMesh->HasVertexColors(0))
 			{
@@ -96,9 +103,14 @@ bool loadMeshFromFile(const std::string & filename, MeshCollection * pMeshCollec
 			{
 				currentTextureCoordinates = currentMesh->mTextureCoords[0][v];
 			}
+			if (currentMesh->HasNormals())
+			{
+				currentModelNormals = currentMesh->mNormals[v];
+			}
 			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
-				currentTextureCoordinates.x,currentTextureCoordinates.y };
+				currentTextureCoordinates.x,currentTextureCoordinates.y,
+				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z };
 
 			vertices.push_back(currentVertex);
 		}
