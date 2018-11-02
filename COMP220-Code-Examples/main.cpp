@@ -72,14 +72,14 @@ int main(int argc, char ** argsv)
 	glEnable(GL_DEPTH_TEST);
 
 	//Load Mesh
-	MeshCollection * tankMesh = new MeshCollection();
-	loadMeshFromFile("utah-teapot.fbx", tankMesh);
+	MeshCollection * teapotMesh = new MeshCollection();
+	loadMeshFromFile("utah-teapot.fbx", teapotMesh);
 
 
 	GLuint textureID = loadTextureFromFile("Tank1DF.png");
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("texturedVert.glsl", "texturedFrag.glsl");
+	GLuint programID = LoadShaders("blinnPhongVert.glsl", "blinnPhongFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -105,11 +105,21 @@ int main(int argc, char ** argsv)
 	//Calculate our perspective matrix
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)640, 0.1f, 100.0f);
 
+	//Light properties
+	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+	//Material Properties
+	glm::vec4 ambientMaterialColour = glm::vec4(0.3f, 0.0f, 0.0f, 1.0f);
+
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
 	GLuint viewMatrixUniformLocation = glGetUniformLocation(programID, "viewMatrix");
 	GLuint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
 	GLint baseTextureLocation = glGetUniformLocation(programID, "baseTexture");
+
+	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
+	GLint ambientMaterialColourLocation= glGetUniformLocation(programID, "ambientMaterialColour");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -137,9 +147,26 @@ int main(int argc, char ** argsv)
 				case SDLK_ESCAPE:
 					running = false;
 					break;
+				case SDLK_a:
+					rotation.y -= 0.1f;
+					break;
+				case SDLK_d:
+					rotation.y += 0.1f;
+					break;
 				}
 			}
 		}
+
+		//update
+		translationMatrix = glm::translate(position);
+		rotationMatrix = glm::rotate(rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
+			*glm::rotate(rotation.y, glm::vec3(0.0f, 1.0f, 0.0f))
+			*glm::rotate(rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		scaleMatrix = glm::scale(scale);
+
+		//combine the above matrices into the model matrix (order is important!!!! - TRS)
+		modelMatrix = translationMatrix * rotationMatrix*scaleMatrix;
+
 		//Do rendering here!
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -155,15 +182,19 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		glUniform1i(baseTextureLocation, 0);
+		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
+		
+		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
 
-		tankMesh->render();
+
+		teapotMesh->render();
 
 		SDL_GL_SwapWindow(window);
 	}
-	if (tankMesh)
+	if (teapotMesh)
 	{
-		delete tankMesh;
-		tankMesh = nullptr;
+		delete teapotMesh;
+		teapotMesh = nullptr;
 	}
 	glDeleteTextures(1, &textureID);
 	glDeleteProgram(programID);
