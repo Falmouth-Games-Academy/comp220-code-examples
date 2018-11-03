@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "Light.h"
 
 int main(int argc, char ** argsv)
 {
@@ -115,10 +116,15 @@ int main(int argc, char ** argsv)
 
 
 	//Material Properties
-	glm::vec4 ambientMaterialColour = glm::vec4(0.5f, 0.0f, 0.0f, 1.0f);
-	glm::vec4 diffuseMaterialColour = glm::vec4(0.8f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	glm::vec4 specularMaterialColour= glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 25.0f;
+
+	//Point light
+	std::vector<PointLight> PointLights;
+	PointLights.push_back({ glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(0.0f,0.0f,-30.0f) });
+	PointLights.push_back({ glm::vec4(0.0f,1.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(10.0f,0.0f,-30.0f) });
 
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
@@ -129,8 +135,8 @@ int main(int argc, char ** argsv)
 
 
 	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
-	GLint diffuseLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
-	GLint specularLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
+	GLint directionalLightDiffuseColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
+	GLint directionalLightSpecularColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
 
 	GLint lightDirectionLocation= glGetUniformLocation(programID, "directionalLight.direction");
 	GLint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
@@ -140,6 +146,27 @@ int main(int argc, char ** argsv)
 	GLint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
 	GLint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
 	GLint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
+
+	const int MAX_NO_OF_POINT_LIGHTS = 8;
+	GLint pointLightDiffuseColourLocations[MAX_NO_OF_POINT_LIGHTS];
+	GLint pointLightSpecularColourLocations[MAX_NO_OF_POINT_LIGHTS];
+	GLint pointLightPositionLocations[MAX_NO_OF_POINT_LIGHTS];
+
+	char characterBuffer[50];
+	for (int i = 0; i < MAX_NO_OF_POINT_LIGHTS; i++)
+	{
+		sprintf(characterBuffer,"pointLights[%i].diffuseColour", i);
+		pointLightDiffuseColourLocations[i] = glGetUniformLocation(programID, characterBuffer);
+		
+		sprintf(characterBuffer, "pointLights[%i].specularColour", i);
+		pointLightSpecularColourLocations[i] = glGetUniformLocation(programID, characterBuffer);
+		
+		sprintf(characterBuffer, "pointLights[%i].position", i);
+		pointLightPositionLocations[i]= glGetUniformLocation(programID, characterBuffer);
+	}
+
+	GLint numberOfPointLightsLocation = glGetUniformLocation(programID, "numberOfPointLights");
+
 
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
@@ -218,12 +245,22 @@ int main(int argc, char ** argsv)
 		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
 		
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
-		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
-		glUniform4fv(specularLightColourLocation, 1, glm::value_ptr(specularLightColour));
+		glUniform4fv(directionalLightDiffuseColourLocation, 1, glm::value_ptr(diffuseLightColour));
+		glUniform4fv(directionalLightSpecularColourLocation, 1, glm::value_ptr(specularLightColour));
 		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
 
 		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
 		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
+
+		for (int i=0; i < PointLights.size(); i++)
+		{
+			glUniform4fv(pointLightDiffuseColourLocations[i], 1, glm::value_ptr(PointLights[i].DiffuseColour));
+			glUniform4fv(pointLightSpecularColourLocations[i], 1, glm::value_ptr(PointLights[i].SpecularColour));
+			glUniform3fv(pointLightPositionLocations[i], 1, glm::value_ptr(PointLights[i].Position));
+		}
+
+		glUniform1i(numberOfPointLightsLocation, PointLights.size());
+
 
 		teapotMesh->render();
 
