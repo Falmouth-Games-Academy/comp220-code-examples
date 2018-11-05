@@ -116,7 +116,7 @@ int main(int argc, char ** argsv)
 
 
 	//Material Properties
-	glm::vec4 ambientMaterialColour = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
 	glm::vec4 diffuseMaterialColour = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	glm::vec4 specularMaterialColour= glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 25.0f;
