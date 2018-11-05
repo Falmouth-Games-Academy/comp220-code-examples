@@ -77,15 +77,16 @@ int main(int argc, char ** argsv)
 	loadMeshFromFile("utah-teapot.fbx", teapotMesh);
 
 
-	GLuint diffuseTextureID = loadTextureFromFile("Tank1DF.png");
+	GLuint diffuseTextureID = loadTextureFromFile("brick_D.png");
+	GLuint normalTextureID = loadTextureFromFile("brick_N.bmp");
 	GLuint specularTextureID = loadTextureFromFile("specMap.png");
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("blinnPhongVert.glsl", "blinnPhongFrag.glsl");
+	GLuint programID = LoadShaders("normalMappingVert.glsl", "normalMappingFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	//calculate the translation, rotation and scale matrices using the above vectores
 	glm::mat4 translationMatrix = glm::translate(position);
@@ -273,7 +274,9 @@ int main(int argc, char ** argsv)
 		teapotMesh = nullptr;
 	}
 	glDeleteTextures(1, &diffuseTextureID);
+	glDeleteTextures(1, &normalTextureID);
 	glDeleteTextures(1, &specularTextureID);
+
 	glDeleteProgram(programID);
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);

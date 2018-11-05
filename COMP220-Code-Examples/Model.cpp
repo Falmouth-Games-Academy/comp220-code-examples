@@ -24,6 +24,8 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 			aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
 			aiVector3D currentModelNormals = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelTangents = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelBitangents = aiVector3D(0.0f, 0.0f, 0.0f);
 
 			if (currentMesh->HasVertexColors(0))
 			{
@@ -35,12 +37,20 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			}
 			if (currentMesh->HasNormals())
 			{
-				currentModelNormals=currentMesh->mNormals[v];
+				currentModelNormals = currentMesh->mNormals[v];
 			}
+			if (currentMesh->HasTangentsAndBitangents())
+			{
+				currentModelTangents = currentMesh->mTangents[v];
+				currentModelBitangents = currentMesh->mBitangents[v];
+			}
+			
 			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
 				currentTextureCoordinates.x,currentTextureCoordinates.y,
-				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z};
+				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z,
+				currentModelTangents.x,currentModelTangents.y,currentModelTangents.z,
+				currentModelBitangents.x,currentModelBitangents.y,currentModelBitangents.z};
 
 			vertices.push_back(currentVertex);
 		}
@@ -88,32 +98,46 @@ bool loadMeshFromFile(const std::string & filename, MeshCollection * pMeshCollec
 		Mesh *pMesh = new Mesh();
 		pMesh->init();
 
-		for (int v = 0; v < currentMesh->mNumVertices; v++)
+		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
-			aiVector3D currentModelVertex = currentMesh->mVertices[v];
-			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
-			aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
-			aiVector3D currentModelNormals = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiMesh *currentMesh = scene->mMeshes[i];
 
-			if (currentMesh->HasVertexColors(0))
+			for (int v = 0; v < currentMesh->mNumVertices; v++)
 			{
-				currentModelColour = currentMesh->mColors[0][v];
-			}
-			if (currentMesh->HasTextureCoords(0))
-			{
-				currentTextureCoordinates = currentMesh->mTextureCoords[0][v];
-			}
-			if (currentMesh->HasNormals())
-			{
-				currentModelNormals = currentMesh->mNormals[v];
-			}
-			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
-				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
-				currentTextureCoordinates.x,currentTextureCoordinates.y,
-				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z };
+				aiVector3D currentModelVertex = currentMesh->mVertices[v];
+				aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
+				aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
+				aiVector3D currentModelNormals = aiVector3D(0.0f, 0.0f, 0.0f);
+				aiVector3D currentModelTangents = aiVector3D(0.0f, 0.0f, 0.0f);
+				aiVector3D currentModelBitangents = aiVector3D(0.0f, 0.0f, 0.0f);
 
-			vertices.push_back(currentVertex);
-		}
+				if (currentMesh->HasVertexColors(0))
+				{
+					currentModelColour = currentMesh->mColors[0][v];
+				}
+				if (currentMesh->HasTextureCoords(0))
+				{
+					currentTextureCoordinates = currentMesh->mTextureCoords[0][v];
+				}
+				if (currentMesh->HasNormals())
+				{
+					currentModelNormals = currentMesh->mNormals[v];
+				}
+				if (currentMesh->HasTangentsAndBitangents())
+				{
+					currentModelTangents = currentMesh->mTangents[v];
+					currentModelBitangents = currentMesh->mBitangents[v];
+				}
+
+				Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
+					currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
+					currentTextureCoordinates.x,currentTextureCoordinates.y,
+					currentModelNormals.x,currentModelNormals.y,currentModelNormals.z,
+					currentModelTangents.x,currentModelTangents.y,currentModelTangents.z,
+					currentModelBitangents.x,currentModelBitangents.y,currentModelBitangents.z };
+
+				vertices.push_back(currentVertex);
+			}
 
 		for (int f = 0; f < currentMesh->mNumFaces; f++)
 		{
