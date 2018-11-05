@@ -42,10 +42,10 @@ uniform vec4 ambientLightColour;
 
 vec4 CalculateLightColour(vec4 diffuseLightColour,vec4 specularLightColour,vec3 lightDirection,vec4 diffuseTextureColour,vec4 specularTextureColour)
 {
-	float nDotl=max(dot(vertexNormalsOut,normalize(lightDirection)),0.0);
+	float nDotl=clamp(dot(vertexNormalsOut,normalize(lightDirection)),0.0,1.0);
 
 	vec3 halfWay=normalize(lightDirection+viewDirection);
-	float nDoth=pow(max(dot(vertexNormalsOut,halfWay),0.0),specularMaterialPower);
+	float nDoth=pow(clamp(dot(vertexNormalsOut,halfWay),0.0,1.0),specularMaterialPower);
 
 	return 	(diffuseLightColour*nDotl*diffuseMaterialColour*diffuseTextureColour)+
 			(specularLightColour*nDoth*specularMaterialColour*specularTextureColour);
@@ -62,7 +62,9 @@ vec4 CalculatePointLight(int currentLightIndex,vec4 diffuseTextureColour,vec4 sp
 									lightDirection,
 									diffuseTextureColour,specularTextureColour);
 
-	return colour/(lightDistance*lightDistance);
+	float attenuation=1.0/(1.0+0.1*lightDistance+0.01*lightDistance*lightDistance);
+
+	return colour*attenuation;
 }
 
 vec4 CalculateDirectionLightColour(vec4 diffuseTextureColour,vec4 specularTextureColour)

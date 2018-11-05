@@ -85,7 +85,7 @@ int main(int argc, char ** argsv)
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
 	//calculate the translation, rotation and scale matrices using the above vectores
 	glm::mat4 translationMatrix = glm::translate(position);
@@ -116,15 +116,16 @@ int main(int argc, char ** argsv)
 
 
 	//Material Properties
-	glm::vec4 ambientMaterialColour = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
 	glm::vec4 diffuseMaterialColour = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	glm::vec4 specularMaterialColour= glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 25.0f;
 
 	//Point light
 	std::vector<PointLight> PointLights;
-	PointLights.push_back({ glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(0.0f,0.0f,-30.0f) });
-	PointLights.push_back({ glm::vec4(0.0f,1.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(2.0f,0.0f,-30.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,-8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(0.0f,1.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,-8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(0.0f,0.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
 
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
