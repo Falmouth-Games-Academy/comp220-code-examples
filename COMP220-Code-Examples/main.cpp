@@ -111,23 +111,24 @@ int main(int argc, char ** argsv)
 
 	//Light properties
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	glm::vec4 diffuseLightColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 specularLightColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	glm::vec3 lightDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
 
 	//Material Properties
 	glm::vec4 ambientMaterialColour = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
-	glm::vec4 diffuseMaterialColour = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 	glm::vec4 specularMaterialColour= glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	float specularMaterialPower = 25.0f;
 
 	//Point light
 	std::vector<PointLight> PointLights;
-	PointLights.push_back({ glm::vec4(1.0f,0.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,-8.0f,-40.0f) });
-	PointLights.push_back({ glm::vec4(0.0f,1.0f,0.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,-8.0f,-40.0f) });
-	PointLights.push_back({ glm::vec4(0.0f,0.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,-8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,-8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
+	
 
 	//Get the uniforms from the shader
 	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
