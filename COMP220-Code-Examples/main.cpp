@@ -78,12 +78,14 @@ int main(int argc, char ** argsv)
 
 
 	GLuint diffuseTextureID = loadTextureFromFile("brick_D.png");
-	GLuint normalTextureID = loadTextureFromFile("brick_N.bmp");
+	GLuint normalTextureID = loadTextureFromFile("brick_N.png");
+	GLuint heightTextureID = loadTextureFromFile("brick_H.png");
 	GLuint specularTextureID = loadTextureFromFile("specMap.png");
 
 	// Create and compile our GLSL program from the shaders
+	//GLuint programID = LoadShaders("normalMappingVert.glsl", "normalMappingFrag.glsl");
 	//GLuint programID = LoadShaders("blinnPhongVert.glsl", "blinnPhongFrag.glsl");
-	GLuint programID = LoadShaders("normalMappingVert.glsl", "normalMappingFrag.glsl");
+	GLuint programID = LoadShaders("parallaxMappingVert.glsl", "parallaxMappingFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -118,9 +120,9 @@ int main(int argc, char ** argsv)
 
 
 	//Material Properties
-	glm::vec4 ambientMaterialColour = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
-	glm::vec4 diffuseMaterialColour = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-	glm::vec4 specularMaterialColour= glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	glm::vec4 specularMaterialColour= glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 25.0f;
 
 	//Point light
@@ -241,6 +243,8 @@ int main(int argc, char ** argsv)
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, normalTextureID);
 
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, heightTextureID);
 
 		//send the uniforms across
 		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
@@ -249,6 +253,7 @@ int main(int argc, char ** argsv)
 		glUniform1i(diffuseTextureLocation, 0);
 		glUniform1i(specularTextureLocation, 1);
 		glUniform1i(normalTextureLocation, 2);
+		glUniform1i(heightTextureID, 3);
 
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));

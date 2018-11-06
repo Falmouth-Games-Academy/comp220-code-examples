@@ -179,6 +179,8 @@ copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OutDir)\assimp-vc1
     </None>
     <None Include="normalMappingFrag.glsl" />
     <None Include="normalMappingVert.glsl" />
+    <None Include="parallaxMappingFrag.glsl" />
+    <None Include="parallaxMappingVert.glsl" />
     <None Include="sphere.nff" />
     <None Include="texturedFrag.glsl" />
     <None Include="texturedVert.glsl" />

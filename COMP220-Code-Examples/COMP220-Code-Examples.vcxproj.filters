@@ -61,5 +61,7 @@
     <None Include="blinnPhongVert.glsl" />
     <None Include="normalMappingFrag.glsl" />
     <None Include="normalMappingVert.glsl" />
+    <None Include="parallaxMappingFrag.glsl" />
+    <None Include="parallaxMappingVert.glsl" />
   </ItemGroup>
 </Project>
