@@ -59,5 +59,7 @@
     <None Include="sphere.nff" />
     <None Include="blinnPhongFrag.glsl" />
     <None Include="blinnPhongVert.glsl" />
+    <None Include="normalMappingFrag.glsl" />
+    <None Include="normalMappingVert.glsl" />
   </ItemGroup>
 </Project>

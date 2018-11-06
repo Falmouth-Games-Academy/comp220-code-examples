@@ -98,7 +98,7 @@ void main()
 
 	for (int i=0;i<numberOfPointLights;i++)
 	{
-		finalColour+=CalculatePointLight(i,diffuseTextureColour,specularTextureColour);
+		finalColour+=CalculatePointLight(normal,i,diffuseTextureColour,specularTextureColour);
 	}
 
 	colour=(ambientLightColour*ambientMaterialColour)+finalColour;

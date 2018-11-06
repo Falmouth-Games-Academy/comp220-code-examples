@@ -27,8 +27,8 @@ void main(){
 	vec4 worldPosition=modelMatrix*vec4(vertexPosition,1.0f);
 	vec4 mvpPosition=mvpMatrix*vec4(vertexPosition,1.0f);
 	
-	vec3 worldTangent=(normalize(model*vec4(vertexTangents,0.0f))).xyz;
-	vec3 worldBinormal=(normalize(model*vec4(vertexBitangents,0.0f))).xyz;
+	vec3 worldTangent=(normalize(modelMatrix*vec4(vertexTangents,0.0f))).xyz;
+	vec3 worldBinormal=(normalize(modelMatrix*vec4(vertexBitangents,0.0f))).xyz;
 	vec3 worldNormal=normalize(modelMatrix*vec4(vertexNormals,0.0f)).xyz;
 	tangentMatrix=mat3(worldTangent,worldBinormal,worldNormal);
 

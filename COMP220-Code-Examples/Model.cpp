@@ -138,6 +138,7 @@ bool loadMeshFromFile(const std::string & filename, MeshCollection * pMeshCollec
 
 				vertices.push_back(currentVertex);
 			}
+		}
 
 		for (int f = 0; f < currentMesh->mNumFaces; f++)
 		{

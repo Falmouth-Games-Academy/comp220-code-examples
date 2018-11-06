@@ -177,6 +177,8 @@ copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OutDir)\assimp-vc1
     <None Include="frag.glsl">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
+    <None Include="normalMappingFrag.glsl" />
+    <None Include="normalMappingVert.glsl" />
     <None Include="sphere.nff" />
     <None Include="texturedFrag.glsl" />
     <None Include="texturedVert.glsl" />
