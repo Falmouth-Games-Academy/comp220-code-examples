@@ -88,6 +88,6 @@ void main()
 	{
 		finalColour+=CalculatePointLight(i,diffuseTextureColour,specularTextureColour);
 	}
-
-	colour=(ambientLightColour*ambientMaterialColour)+finalColour;
+	colour=vec4(1.0f,1.0f,1.0f,1.0f);
+	//colour=(ambientLightColour*ambientMaterialColour)+finalColour;
 }

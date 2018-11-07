@@ -14,6 +14,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Light.h"
+#include "Timer.h"
 
 int main(int argc, char ** argsv)
 {
@@ -74,7 +75,7 @@ int main(int argc, char ** argsv)
 
 	//Load Mesh
 	MeshCollection * teapotMesh = new MeshCollection();
-	loadMeshFromFile("utah-teapot.fbx", teapotMesh);
+	loadMeshFromFile("water.fbx", teapotMesh);
 
 
 	GLuint diffuseTextureID = loadTextureFromFile("brick_D.png");
@@ -82,10 +83,8 @@ int main(int argc, char ** argsv)
 	GLuint heightTextureID = loadTextureFromFile("brick_H.png");
 	GLuint specularTextureID = loadTextureFromFile("specMap.png");
 
-	// Create and compile our GLSL program from the shaders
-	//GLuint programID = LoadShaders("normalMappingVert.glsl", "normalMappingFrag.glsl");
-	//GLuint programID = LoadShaders("blinnPhongVert.glsl", "blinnPhongFrag.glsl");
-	GLuint programID = LoadShaders("parallaxMappingVert.glsl", "parallaxMappingFrag.glsl");
+	// Create and compile our GLSL program from the shader
+	GLuint programID = LoadShaders("vertexAnimation.glsl", "blinnPhongFrag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -102,8 +101,8 @@ int main(int argc, char ** argsv)
 	glm::mat4 modelMatrix = translationMatrix * rotationMatrix*scaleMatrix;
 
 	//Set up vectors for our camera position
-	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
-	glm::vec3 cameraLook = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 cameraPosition = glm::vec3(0.0f, 10.0f, 20.0f);
+	glm::vec3 cameraLook = position;
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//Calculate the view matrix
@@ -114,8 +113,8 @@ int main(int argc, char ** argsv)
 	//Light properties
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glm::vec4 diffuseLightColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	glm::vec4 specularLightColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec3 lightDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 
 
@@ -127,8 +126,8 @@ int main(int argc, char ** argsv)
 
 	//Point light
 	std::vector<PointLight> PointLights;
-	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,-8.0f,-40.0f) });
-	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,-8.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,0.0f,-40.0f) });
+	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f, 0.0f,-40.0f) });
 	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
 	
 
@@ -154,6 +153,9 @@ int main(int argc, char ** argsv)
 	GLint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
 	GLint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
 
+	GLint currentTimeLocation = glGetUniformLocation(programID, "currentTime");
+	GLint deltaTimeLocation = glGetUniformLocation(programID, "deltaTime");
+
 	const int MAX_NO_OF_POINT_LIGHTS = 8;
 	GLint pointLightDiffuseColourLocations[MAX_NO_OF_POINT_LIGHTS];
 	GLint pointLightSpecularColourLocations[MAX_NO_OF_POINT_LIGHTS];
@@ -174,7 +176,8 @@ int main(int argc, char ** argsv)
 
 	GLint numberOfPointLightsLocation = glGetUniformLocation(programID, "numberOfPointLights");
 
-
+	Timer timer;
+	timer.Start();
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -217,6 +220,8 @@ int main(int argc, char ** argsv)
 				}
 			}
 		}
+
+		timer.Update();
 
 		//update
 		translationMatrix = glm::translate(position);
@@ -275,6 +280,9 @@ int main(int argc, char ** argsv)
 		}
 
 		glUniform1i(numberOfPointLightsLocation, PointLights.size());
+
+		glUniform1f(currentTimeLocation, (float)timer.GetCurrentTime());
+		glUniform1f(deltaTimeLocation, (float)timer.GetDeltaTime());
 
 
 		teapotMesh->render();

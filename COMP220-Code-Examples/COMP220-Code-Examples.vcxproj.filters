@@ -30,6 +30,9 @@
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shaders.h">
@@ -50,6 +53,9 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="vert.glsl" />
@@ -63,5 +69,6 @@
     <None Include="normalMappingVert.glsl" />
     <None Include="parallaxMappingFrag.glsl" />
     <None Include="parallaxMappingVert.glsl" />
+    <None Include="vertexAnimation.glsl" />
   </ItemGroup>
 </Project>
