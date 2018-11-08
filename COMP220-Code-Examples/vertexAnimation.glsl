@@ -1,5 +1,6 @@
 #version 330 core
-
+//More examples here
+//https://medium.com/@joshmarinacci/water-ripples-with-vertex-shaders-6a9ecbdf091f
 layout(location = 0) in vec3 vertexPosition;
 layout(location = 1) in vec4 vertexColours;
 layout(location=2) in vec2 vertexTextureCoord;
