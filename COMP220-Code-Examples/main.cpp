@@ -73,22 +73,52 @@ int main(int argc, char ** argsv)
 
 	glEnable(GL_DEPTH_TEST);
 
-	//Load Mesh
-	MeshCollection * teapotMesh = new MeshCollection();
-	loadMeshFromFile("water.fbx", teapotMesh);
+	Vertex verts[] =
+	{
 
+		{ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f }, 
+		{ -0.5f, -0.5f, 0.5f,-0.5f, -0.5f, 0.5f, 1.0f },
+		{ 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 1.0f },
+		{ 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f }, 
 
-	GLuint diffuseTextureID = loadTextureFromFile("brick_D.png");
-	GLuint normalTextureID = loadTextureFromFile("brick_N.png");
-	GLuint heightTextureID = loadTextureFromFile("brick_H.png");
-	GLuint specularTextureID = loadTextureFromFile("specMap.png");
+		{ -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 1.0f },
+		{ -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
+		{ 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
+		{ 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 1.0f }
+	};
+
+	//Define triangles in the cube
+	unsigned int indices[] =
+	{
+		1, 0 , 4,
+		4, 0, 5,
+
+		7, 2, 1,
+		7, 1, 4,
+
+		1, 2, 3,
+		1, 3, 0,
+
+		5, 0, 3,
+		5, 3, 6,
+
+		6, 3, 7,
+		7, 3, 2,
+
+		7, 4, 5,
+		7, 5, 6
+	};
+
+	Mesh * morphMesh = new Mesh();
+	morphMesh->init();
+	morphMesh->copyBufferData(verts, 8, indices, 36);
 
 	// Create and compile our GLSL program from the shader
-	GLuint programID = LoadShaders("vertexAnimation.glsl", "frag.glsl");
+	GLuint programID = LoadShaders("morphTargetVert.glsl", "frag.glsl");
 	//Set up positions for position, rotation and scale
-	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, -10.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 scale = glm::vec3(2.0f, 2.0f, 2.0f);
 
 	//calculate the translation, rotation and scale matrices using the above vectores
 	glm::mat4 translationMatrix = glm::translate(position);
@@ -101,7 +131,7 @@ int main(int argc, char ** argsv)
 	glm::mat4 modelMatrix = translationMatrix * rotationMatrix*scaleMatrix;
 
 	//Set up vectors for our camera position
-	glm::vec3 cameraPosition = glm::vec3(0.0f, 10.0f, 20.0f);
+	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 cameraLook = position;
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -129,6 +159,8 @@ int main(int argc, char ** argsv)
 	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(-5.0f,0.0f,-40.0f) });
 	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f, 0.0f,-40.0f) });
 	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
+
+	float morphBlendAlpha = 0.0f;
 	
 
 	//Get the uniforms from the shader
@@ -155,6 +187,7 @@ int main(int argc, char ** argsv)
 
 	GLint currentTimeLocation = glGetUniformLocation(programID, "currentTime");
 	GLint deltaTimeLocation = glGetUniformLocation(programID, "deltaTime");
+	GLint morphBlendAlphaLocation = glGetUniformLocation(programID, "morphBlendAlpha");
 
 	const int MAX_NO_OF_POINT_LIGHTS = 8;
 	GLint pointLightDiffuseColourLocations[MAX_NO_OF_POINT_LIGHTS];
@@ -181,6 +214,7 @@ int main(int argc, char ** argsv)
 	Timer timer;
 	timer.Start();
 
+	bool startMorph = false;
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
 	//SDL Event structure, this will be checked in the while loop
@@ -219,11 +253,32 @@ int main(int argc, char ** argsv)
 				case SDLK_s:
 					rotation.x += 0.1f;
 					break;
+				case SDLK_UP:
+					morphBlendAlpha += 0.1f;
+					morphBlendAlpha = glm::clamp(morphBlendAlpha, 0.0f, 1.0f);
+					break;
+				case SDLK_DOWN:
+					morphBlendAlpha -= 0.1f;
+					morphBlendAlpha = glm::clamp(morphBlendAlpha, 0.0f, 1.0f);
+					break;
+				case SDLK_SPACE:
+					startMorph = true;
+					morphBlendAlpha = 0.0f;
 				}
 			}
 		}
 
 		timer.Update();
+
+		if (startMorph)
+		{
+			morphBlendAlpha += timer.GetDeltaTime();
+			if (morphBlendAlpha>1.0f)
+			{
+				startMorph = false;
+				morphBlendAlpha = 1.0f;
+			}
+		}
 
 		//update
 		translationMatrix = glm::translate(position);
@@ -241,26 +296,12 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseTextureID);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularTextureID);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, normalTextureID);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, heightTextureID);
 
 		//send the uniforms across
 		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-		glUniform1i(diffuseTextureLocation, 0);
-		glUniform1i(specularTextureLocation, 1);
-		glUniform1i(normalTextureLocation, 2);
-		glUniform1i(heightTextureID, 3);
+
 
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
@@ -283,22 +324,15 @@ int main(int argc, char ** argsv)
 
 		glUniform1i(numberOfPointLightsLocation, PointLights.size());
 
-		glUniform1f(currentTimeLocation, (float)timer.GetUpdatedTime());
-		glUniform1f(deltaTimeLocation, (float)timer.GetDeltaTime());
+		glUniform1f(currentTimeLocation, timer.GetUpdatedTime());
+		glUniform1f(deltaTimeLocation, timer.GetDeltaTime());
+		glUniform1f(morphBlendAlphaLocation,morphBlendAlpha);
 
-
-		teapotMesh->render();
-
+		morphMesh->render();
 		SDL_GL_SwapWindow(window);
 	}
-	if (teapotMesh)
-	{
-		delete teapotMesh;
-		teapotMesh = nullptr;
-	}
-	glDeleteTextures(1, &diffuseTextureID);
-	glDeleteTextures(1, &normalTextureID);
-	glDeleteTextures(1, &specularTextureID);
+
+	delete morphMesh;
 
 	glDeleteProgram(programID);
 	//Delete Context

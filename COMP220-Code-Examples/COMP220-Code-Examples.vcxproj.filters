@@ -70,5 +70,6 @@
     <None Include="parallaxMappingFrag.glsl" />
     <None Include="parallaxMappingVert.glsl" />
     <None Include="vertexAnimation.glsl" />
+    <None Include="morphTargetVert.glsl" />
   </ItemGroup>
 </Project>
