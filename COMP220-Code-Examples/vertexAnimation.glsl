@@ -5,7 +5,6 @@ layout(location = 1) in vec4 vertexColours;
 layout(location=2) in vec2 vertexTextureCoord;
 layout(location=3) in vec3 vertexNormals;
 
-//https://medium.com/@joshmarinacci/water-ripples-with-vertex-shaders-6a9ecbdf091f
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -25,11 +24,14 @@ void main(){
 	
 	mat4 mvpMatrix=projectionMatrix*viewMatrix*modelMatrix;
 
-	
-	vec4 worldPosition=modelMatrix*vec4(vertexPosition,1.0f);
-	vec4 mvpPosition=mvpMatrix*vec4(vertexPosition,1.0f);
+	vec3 adjustedVertexPosition=vertexPosition;
+	adjustedVertexPosition.y+=(sin(currentTime+adjustedVertexPosition.x)*10.0)*0.1;
+	adjustedVertexPosition.z+=(cos(currentTime+adjustedVertexPosition.y)*10.0)*0.1;
 
-	worldPosition.y+=(sin(currentTime+worldPosition.x)*3.0)*0.1;
+	vec4 worldPosition=modelMatrix*vec4(adjustedVertexPosition,1.0f);
+	vec4 mvpPosition=mvpMatrix*vec4(adjustedVertexPosition,1.0f);
+
+	//worldPosition.y+=(sin(currentTime+worldPosition.x)*3.0)*0.1;
 	
 	vertexColoursOut=vertexColours;
 	vertexTextureCoordOut=vertexTextureCoord;

@@ -26,9 +26,15 @@ public:
 		return CurrentTime;
 	};
 
+	float GetUpdatedTime()
+	{
+		return UpdatedTime;
+	};
+
 private:
 	Uint64 LastTime;
 	Uint64 CurrentTime;
 	Uint64 Frequency;
 	float DeltaTime;
+	float UpdatedTime;
 };

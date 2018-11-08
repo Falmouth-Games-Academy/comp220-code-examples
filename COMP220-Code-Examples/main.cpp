@@ -84,7 +84,7 @@ int main(int argc, char ** argsv)
 	GLuint specularTextureID = loadTextureFromFile("specMap.png");
 
 	// Create and compile our GLSL program from the shader
-	GLuint programID = LoadShaders("vertexAnimation.glsl", "blinnPhongFrag.glsl");
+	GLuint programID = LoadShaders("vertexAnimation.glsl", "frag.glsl");
 	//Set up positions for position, rotation and scale
 	glm::vec3 position = glm::vec3(0.0f, -8.0f, -50.0f);
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -175,6 +175,8 @@ int main(int argc, char ** argsv)
 	}
 
 	GLint numberOfPointLightsLocation = glGetUniformLocation(programID, "numberOfPointLights");
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
 	Timer timer;
 	timer.Start();
@@ -281,7 +283,7 @@ int main(int argc, char ** argsv)
 
 		glUniform1i(numberOfPointLightsLocation, PointLights.size());
 
-		glUniform1f(currentTimeLocation, (float)timer.GetCurrentTime());
+		glUniform1f(currentTimeLocation, (float)timer.GetUpdatedTime());
 		glUniform1f(deltaTimeLocation, (float)timer.GetDeltaTime());
 
 

@@ -6,6 +6,7 @@ Timer::Timer()
 	CurrentTime = 0;
 	Frequency = 0;
 	LastTime = 0;
+	UpdatedTime = 0;
 }
 
 Timer::~Timer()
@@ -31,5 +32,6 @@ void Timer::Update()
 	DeltaTime = (float)(CurrentTime - LastTime) / (float)Frequency;
 	//Set the last time equal to the current time
 	LastTime = CurrentTime;
+	UpdatedTime += DeltaTime;
 
 }
