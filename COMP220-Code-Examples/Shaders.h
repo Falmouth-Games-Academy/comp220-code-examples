@@ -6,7 +6,30 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
+#include <iostream>
 
 #include <stdio.h>
 
 GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_path);
+
+class Shader
+{
+public:
+	Shader();
+	~Shader();
+
+	void InitialiseUniforms();
+
+	GLint GetUniform(std::string name);
+
+	void Use();
+
+	bool Load(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+
+
+private:
+	GLuint ShaderProgramID;
+	std::map<std::string, GLint> UniformMap;
+
+};
