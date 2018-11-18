@@ -179,7 +179,49 @@ int main(int argc, char ** argsv)
 
 	float morphBlendAlpha = 0.0f;
 
+	GLuint colourBufferID = CreateTexture(800, 640);
 
+	GLuint depthBufferID = 0;
+	glGenRenderbuffers(1, &depthBufferID);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 800, 640);
+
+	GLuint framebufferID = 0;
+	glGenFramebuffers(1, &framebufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colourBufferID, 0);
+	
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Frame Buffer", "Unable to create framebuffer", NULL);
+	}
+
+	float screenVerts[]=
+	{
+		-1,-1,
+		1,-1,
+		-1,1,
+		1,1
+	};
+
+	GLuint screenQuadVB = 0;
+	glGenBuffers(1, &screenQuadVB);
+	glBindBuffer(GL_ARRAY_BUFFER, screenQuadVB);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), screenVerts, GL_STATIC_DRAW);
+
+	GLuint screenVAO = 0;
+	glGenVertexArrays(1, &screenVAO);
+	glBindVertexArray(screenVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, screenQuadVB);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	Shader * postProcessShader = new Shader();
+	postProcessShader->Load("passThruVert.glsl", "postFrag.glsl");
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	Timer timer;
 	timer.Start();
@@ -245,7 +287,10 @@ int main(int argc, char ** argsv)
 		}
 
 		//Do rendering here!
+		glEnable(GL_DEPTH_TEST);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
 		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClearDepth(1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		for (GameObject * obj : GameObjectList) {
@@ -265,6 +310,22 @@ int main(int argc, char ** argsv)
 
 			obj->Render();
 		}
+
+		glDisable(GL_DEPTH_TEST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		postProcessShader->Use();
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, colourBufferID);
+
+		glUniform1i(postProcessShader->GetUniform("texture"), 0);
+
+		glBindVertexArray(screenVAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
 		SDL_GL_SwapWindow(window);
 	}
 
@@ -281,6 +342,15 @@ int main(int argc, char ** argsv)
 			iter++;
 		}
 	}
+	if (postProcessShader)
+	{
+		delete postProcessShader;
+	}
+	glDeleteVertexArrays(1, &screenVAO);
+	glDeleteBuffers(1, &screenQuadVB);
+	glDeleteFramebuffers(1, &framebufferID);
+	glDeleteRenderbuffers(1, &depthBufferID);
+	glDeleteTextures(1, &colourBufferID);
 	GameObjectList.clear();
 	//delete cubeGO;
 	//Delete Context
