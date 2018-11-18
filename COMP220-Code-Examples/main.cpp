@@ -15,6 +15,7 @@
 #include "Mesh.h"
 #include "Light.h"
 #include "Timer.h"
+#include "GameObject.h"
 
 int main(int argc, char ** argsv)
 {
@@ -71,6 +72,8 @@ int main(int argc, char ** argsv)
 		return 1;
 	}
 
+	std::vector<GameObject*> GameObjectList;
+
 	glEnable(GL_DEPTH_TEST);
 
 	Vertex verts[] =
@@ -112,33 +115,47 @@ int main(int argc, char ** argsv)
 	Mesh * morphMesh = new Mesh();
 	morphMesh->init();
 	morphMesh->copyBufferData(verts, 8, indices, 36);
+	MeshCollection* morphMeshes = new MeshCollection();
+	morphMeshes->addMesh(morphMesh);
 
 	// Create and compile our GLSL program from the shader
-	GLuint programID = LoadShaders("morphTargetVert.glsl", "frag.glsl");
-	//Set up positions for position, rotation and scale
-	glm::vec3 position = glm::vec3(0.0f, 0.0f, -10.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 scale = glm::vec3(2.0f, 2.0f, 2.0f);
+	Shader * morphShader = new Shader();
+	morphShader->Load("morphTargetVert.glsl", "frag.glsl");
 
-	//calculate the translation, rotation and scale matrices using the above vectores
-	glm::mat4 translationMatrix = glm::translate(position);
-	glm::mat4 rotationMatrix = glm::rotate(rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
-		*glm::rotate(rotation.y, glm::vec3(0.0f, 1.0f, 0.0f))
-		*glm::rotate(rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::mat4 scaleMatrix = glm::scale(scale);
+	GameObject * cubeGO = new GameObject();
+	cubeGO->SetPosition(0.0f, 0.0f, -10.0f);
+	cubeGO->SetMesh(morphMeshes);
+	cubeGO->SetShader(morphShader);
 
-	//combine the above matrices into the model matrix (order is important!!!! - TRS)
-	glm::mat4 modelMatrix = translationMatrix * rotationMatrix*scaleMatrix;
+
+
+
+	MeshCollection * teapotMeshes = new MeshCollection();
+	loadMeshFromFile("utah-teapot.fbx", teapotMeshes);
+
+	Shader * texturedShader = new Shader();
+	texturedShader->Load("texturedVert.glsl", "texturedFrag.glsl");
+
+	GLuint textureID = loadTextureFromFile("brick_D.png");
+
+	GameObject * teapotGO = new GameObject();
+	teapotGO->SetPosition(0.0f, 0.0f, -50.0f);
+	teapotGO->SetMesh(teapotMeshes);
+	teapotGO->SetShader(texturedShader);
+	teapotGO->SetDiffuseTexture(textureID);
+
+	GameObjectList.push_back(cubeGO);
+	GameObjectList.push_back(teapotGO);
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
-	glm::vec3 cameraLook = position;
+	glm::vec3 cameraLook = glm::vec3(0.0f, 0.0f, -10.0f);
 	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	//Calculate the view matrix
 	glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraLook, cameraUp);
 	//Calculate our perspective matrix
-	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)640, 0.1f, 100.0f);
+	glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)640, 0.1f, 1000.0f);
 
 	//Light properties
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -161,54 +178,7 @@ int main(int argc, char ** argsv)
 	PointLights.push_back({ glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec4(1.0f,1.0f,1.0f,1.0f),glm::vec3(5.0f,8.0f,-40.0f) });
 
 	float morphBlendAlpha = 0.0f;
-	
 
-	//Get the uniforms from the shader
-	GLuint modelMatrixUniformLocation = glGetUniformLocation(programID, "modelMatrix");
-	GLuint viewMatrixUniformLocation = glGetUniformLocation(programID, "viewMatrix");
-	GLuint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
-	GLint diffuseTextureLocation = glGetUniformLocation(programID, "diffuseTexture");
-	GLint specularTextureLocation = glGetUniformLocation(programID, "specularTexture");
-	GLint normalTextureLocation = glGetUniformLocation(programID, "normalTexture");
-
-
-	GLint ambientLightColourLocation= glGetUniformLocation(programID, "ambientLightColour");
-	GLint directionalLightDiffuseColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
-	GLint directionalLightSpecularColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
-
-	GLint lightDirectionLocation= glGetUniformLocation(programID, "directionalLight.direction");
-	GLint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
-
-
-	GLint ambientMaterialColourLocation= glGetUniformLocation(programID, "ambientMaterialColour");
-	GLint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
-	GLint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
-	GLint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
-
-	GLint currentTimeLocation = glGetUniformLocation(programID, "currentTime");
-	GLint deltaTimeLocation = glGetUniformLocation(programID, "deltaTime");
-	GLint morphBlendAlphaLocation = glGetUniformLocation(programID, "morphBlendAlpha");
-
-	const int MAX_NO_OF_POINT_LIGHTS = 8;
-	GLint pointLightDiffuseColourLocations[MAX_NO_OF_POINT_LIGHTS];
-	GLint pointLightSpecularColourLocations[MAX_NO_OF_POINT_LIGHTS];
-	GLint pointLightPositionLocations[MAX_NO_OF_POINT_LIGHTS];
-
-	char characterBuffer[50];
-	for (int i = 0; i < MAX_NO_OF_POINT_LIGHTS; i++)
-	{
-		sprintf(characterBuffer,"pointLights[%i].diffuseColour", i);
-		pointLightDiffuseColourLocations[i] = glGetUniformLocation(programID, characterBuffer);
-		
-		sprintf(characterBuffer, "pointLights[%i].specularColour", i);
-		pointLightSpecularColourLocations[i] = glGetUniformLocation(programID, characterBuffer);
-		
-		sprintf(characterBuffer, "pointLights[%i].position", i);
-		pointLightPositionLocations[i]= glGetUniformLocation(programID, characterBuffer);
-	}
-
-	GLint numberOfPointLightsLocation = glGetUniformLocation(programID, "numberOfPointLights");
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	Timer timer;
@@ -241,18 +211,6 @@ int main(int argc, char ** argsv)
 				case SDLK_ESCAPE:
 					running = false;
 					break;
-				case SDLK_a:
-					rotation.y -= 0.1f;
-					break;
-				case SDLK_d:
-					rotation.y += 0.1f;
-					break;
-				case SDLK_w:
-					rotation.x -= 0.1f;
-					break;
-				case SDLK_s:
-					rotation.x += 0.1f;
-					break;
 				case SDLK_UP:
 					morphBlendAlpha += 0.1f;
 					morphBlendAlpha = glm::clamp(morphBlendAlpha, 0.0f, 1.0f);
@@ -281,60 +239,50 @@ int main(int argc, char ** argsv)
 		}
 
 		//update
-		translationMatrix = glm::translate(position);
-		rotationMatrix = glm::rotate(rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
-			*glm::rotate(rotation.y, glm::vec3(0.0f, 1.0f, 0.0f))
-			*glm::rotate(rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
-		scaleMatrix = glm::scale(scale);
-
-		//combine the above matrices into the model matrix (order is important!!!! - TRS)
-		modelMatrix = translationMatrix * rotationMatrix*scaleMatrix;
+		for (GameObject * obj : GameObjectList)
+		{
+			obj->Update(timer.GetDeltaTime());
+		}
 
 		//Do rendering here!
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(programID);
+		for (GameObject * obj : GameObjectList) {
+
+			Shader * currentShader = obj->GetShader();
+			currentShader->Use();
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D,obj->GetDiffuseTexture());
+
+			glUniformMatrix4fv(currentShader->GetUniform("modelMatrix"), 1, GL_FALSE, glm::value_ptr(obj->GetModelTransformation()));
+			glUniformMatrix4fv(currentShader->GetUniform("viewMatrix"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+			glUniformMatrix4fv(currentShader->GetUniform("projectionMatrix"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+			glUniform1f(currentShader->GetUniform("morphBlendAlpha"), morphBlendAlpha);
+			glUniform1i(currentShader->GetUniform("diffuseTexture"), 0);
 
 
-		//send the uniforms across
-		glUniformMatrix4fv(modelMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(viewMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
-
-		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
-		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
-		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
-		
-		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
-		glUniform4fv(directionalLightDiffuseColourLocation, 1, glm::value_ptr(diffuseLightColour));
-		glUniform4fv(directionalLightSpecularColourLocation, 1, glm::value_ptr(specularLightColour));
-		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
-
-		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
-		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
-
-		for (int i=0; i < PointLights.size(); i++)
-		{
-			glUniform4fv(pointLightDiffuseColourLocations[i], 1, glm::value_ptr(PointLights[i].DiffuseColour));
-			glUniform4fv(pointLightSpecularColourLocations[i], 1, glm::value_ptr(PointLights[i].SpecularColour));
-			glUniform3fv(pointLightPositionLocations[i], 1, glm::value_ptr(PointLights[i].Position));
+			obj->Render();
 		}
-
-		glUniform1i(numberOfPointLightsLocation, PointLights.size());
-
-		glUniform1f(currentTimeLocation, timer.GetUpdatedTime());
-		glUniform1f(deltaTimeLocation, timer.GetDeltaTime());
-		glUniform1f(morphBlendAlphaLocation,morphBlendAlpha);
-
-		morphMesh->render();
 		SDL_GL_SwapWindow(window);
 	}
 
-	delete morphMesh;
-
-	glDeleteProgram(programID);
+	auto iter = GameObjectList.begin();
+	while (iter != GameObjectList.end())
+	{
+		if ((*iter))
+		{
+			delete (*iter);
+			iter = GameObjectList.erase(iter);
+		}
+		else
+		{
+			iter++;
+		}
+	}
+	GameObjectList.clear();
+	//delete cubeGO;
 	//Delete Context
 	SDL_GL_DeleteContext(gl_Context);
 	//Destroy the window and quit SDL2, NB we should do this after all cleanup in this order!!!
