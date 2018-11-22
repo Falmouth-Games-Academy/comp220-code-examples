@@ -109,13 +109,14 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.1\lib\x64\*.dll "</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Libraries\assimp-4.1.0\include;..\Libraries\glm;..\Libraries\SDL2_image-2.0.3\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.8\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\bullet3-2.87\include;..\Libraries\assimp-4.1.0\include;..\Libraries\glm;..\Libraries\SDL2_image-2.0.3\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.8\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>OpenGL32.lib;glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Libraries\assimp-4.1.0\lib\x64;..\Libraries\glew-2.1.0\lib\Release\x64;..\Libraries\SDL2_image-2.0.3\lib\x64;..\Libraries\SDL2-2.0.8\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Bullet3Common_Debug.lib;Bullet3Collision_Debug.lib;Bullet3Dynamics_Debug.lib;Bullet3Geometry_Debug.lib;Bullet3OpenCL_clew_Debug.lib;LinearMath_Debug.lib;BulletCollision_Debug.lib;BulletDynamics_Debug.lib;OpenGL32.lib;glew32.lib;SDL2_image.lib;SDL2.lib;SDL2main.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Libraries\bullet3-2.87\lib\Debug\x64;..\Libraries\assimp-4.1.0\lib\x64;..\Libraries\glew-2.1.0\lib\Release\x64;..\Libraries\SDL2_image-2.0.3\lib\x64;..\Libraries\SDL2-2.0.8\lib\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy ..\Libraries\glew-2.1.0\bin\Release\x64\glew32.dll "$(OutDir)\glew32.dll"

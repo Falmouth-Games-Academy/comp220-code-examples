@@ -329,6 +329,7 @@ int main(int argc, char ** argsv)
 		SDL_GL_SwapWindow(window);
 	}
 
+
 	auto iter = GameObjectList.begin();
 	while (iter != GameObjectList.end())
 	{
