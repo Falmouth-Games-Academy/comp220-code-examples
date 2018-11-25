@@ -19,6 +19,10 @@
 #include "Timer.h"
 #include "GameObject.h"
 
+//Debugging Physics
+//https://stackoverflow.com/questions/14008295/how-to-implement-the-btidebugdraw-interface-of-bullet-in-opengl-4-0
+//https://github.com/kripken/bullet/blob/master/Demos/OpenGL/GLDebugDrawer.cpp
+
 int main(int argc, char ** argsv)
 {
 	//Initialises the SDL Library, passing in SDL_INIT_VIDEO to only initialise the video subsystems
