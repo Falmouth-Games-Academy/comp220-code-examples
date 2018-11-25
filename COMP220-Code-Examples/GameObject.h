@@ -5,6 +5,8 @@
 #include <glm\gtx\transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
+#include <btBulletDynamicsCommon.h>
+
 #include "Mesh.h"
 #include "Shaders.h"
 
@@ -15,6 +17,11 @@ public:
 	~GameObject();
 
 	void Update(float deltaTime);
+
+	void SetScale(float x, float y, float z)
+	{
+		Scale = glm::vec3(x, y, z);
+	};
 
 	void SetPosition(float x, float y, float z)
 	{
@@ -56,6 +63,16 @@ public:
 		return DiffuseTexture;
 	};
 
+	void SetRigidBody(btRigidBody* rigidBody)
+	{
+		RigidBody = rigidBody;
+	};
+
+	btRigidBody*  GetRigidBody()
+	{
+		return RigidBody;
+	};
+
 	void Render();
 
 private:
@@ -79,4 +96,7 @@ private:
 
 	//Texture
 	GLuint DiffuseTexture;
+
+	//RigidBody
+	btRigidBody * RigidBody;
 };

@@ -8,6 +8,8 @@
 #include <glm\gtx\transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
 
+#include <btBulletDynamicsCommon.h>
+
 #include "Shaders.h"
 #include "Vertex.h"
 #include "Texture.h"
@@ -76,76 +78,37 @@ int main(int argc, char ** argsv)
 
 	glEnable(GL_DEPTH_TEST);
 
-	Vertex verts[] =
-	{
-
-		{ -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f }, 
-		{ -0.5f, -0.5f, 0.5f,-0.5f, -0.5f, 0.5f, 1.0f },
-		{ 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 1.0f },
-		{ 0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f }, 
-
-		{ -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 1.0f },
-		{ -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 0.5f, -0.5f, -0.5f, 0.5f, -0.5f, -0.5f, 1.0f }
-	};
-
-	//Define triangles in the cube
-	unsigned int indices[] =
-	{
-		1, 0 , 4,
-		4, 0, 5,
-
-		7, 2, 1,
-		7, 1, 4,
-
-		1, 2, 3,
-		1, 3, 0,
-
-		5, 0, 3,
-		5, 3, 6,
-
-		6, 3, 7,
-		7, 3, 2,
-
-		7, 4, 5,
-		7, 5, 6
-	};
-
-	Mesh * morphMesh = new Mesh();
-	morphMesh->init();
-	morphMesh->copyBufferData(verts, 8, indices, 36);
-	MeshCollection* morphMeshes = new MeshCollection();
-	morphMeshes->addMesh(morphMesh);
-
-	// Create and compile our GLSL program from the shader
-	Shader * morphShader = new Shader();
-	morphShader->Load("morphTargetVert.glsl", "frag.glsl");
-
-	GameObject * cubeGO = new GameObject();
-	cubeGO->SetPosition(0.0f, 0.0f, -10.0f);
-	cubeGO->SetMesh(morphMeshes);
-	cubeGO->SetShader(morphShader);
-
-
-
-
-	MeshCollection * teapotMeshes = new MeshCollection();
-	loadMeshFromFile("utah-teapot.fbx", teapotMeshes);
+	MeshCollection * boxMeshes = new MeshCollection();
+	loadMeshFromFile("cube.nff", boxMeshes);
 
 	Shader * texturedShader = new Shader();
 	texturedShader->Load("texturedVert.glsl", "texturedFrag.glsl");
 
 	GLuint textureID = loadTextureFromFile("brick_D.png");
 
-	GameObject * teapotGO = new GameObject();
-	teapotGO->SetPosition(0.0f, 0.0f, -50.0f);
-	teapotGO->SetMesh(teapotMeshes);
-	teapotGO->SetShader(texturedShader);
-	teapotGO->SetDiffuseTexture(textureID);
+	GameObject * groundGO = new GameObject();
+	groundGO->SetPosition(0.0f, -10.0f, -120.0f);
+	groundGO->SetScale(100.0f, 1.0f, 100.0f);
+	groundGO->SetMesh(boxMeshes);
+	groundGO->SetShader(texturedShader);
+	groundGO->SetDiffuseTexture(textureID);
 
-	GameObjectList.push_back(cubeGO);
-	GameObjectList.push_back(teapotGO);
+	GameObjectList.push_back(groundGO);
+
+
+	MeshCollection * sphereMeshes = new MeshCollection();
+	loadMeshFromFile("sphere.nff", sphereMeshes);
+
+	Shader * standardShader = new Shader();
+	standardShader->Load("vert.glsl", "frag.glsl");
+
+	GameObject * sphereGO = new GameObject();
+	sphereGO->SetPosition(0.0f, 40.0f, -120.0f);
+	sphereGO->SetMesh(sphereMeshes);
+	sphereGO->SetShader(standardShader);
+
+	GameObjectList.push_back(sphereGO);
+
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
@@ -223,6 +186,62 @@ int main(int argc, char ** argsv)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	//init physics
+
+	//Create Config for Collision
+	btDefaultCollisionConfiguration* collisionConfig = new btDefaultCollisionConfiguration();
+
+	//Collision Dispatcher
+	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfig);
+
+	//Create Broadphase
+	btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+
+	//solver
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
+
+	//Create Physics World
+	btDiscreteDynamicsWorld* dynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
+
+	//Create ground shadpe
+	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.0), btScalar(0.5), btScalar(50.0)));
+
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	glm::vec3 groundPosition = groundGO->GetPosition();
+	groundTransform.setOrigin(btVector3(groundPosition.x, groundPosition.y, groundPosition.z));
+
+	//Create Ground Rigid Body
+	btVector3 groundLocalInertia = btVector3(0, 0, 0);
+	btDefaultMotionState* groundMotionState = new btDefaultMotionState(groundTransform);
+	btRigidBody::btRigidBodyConstructionInfo groundInfo(btScalar(0.0), groundMotionState, groundShape, groundLocalInertia);
+	btRigidBody* groundBody = new btRigidBody(groundInfo);
+
+	dynamicWorld->addRigidBody(groundBody);
+	groundGO->SetRigidBody(groundBody);
+
+	//Create Sphere Shape
+	btCollisionShape* sphereShape = new btSphereShape(btScalar(1.0));
+	btTransform sphereTransform;
+	sphereTransform.setIdentity();
+	glm::vec3 spherePosition = sphereGO->GetPosition();
+
+	btScalar sphereMass = 1.0;
+	btVector3 sphereLocalInertia = btVector3(0, 0, 0);
+	sphereShape->calculateLocalInertia(sphereMass, sphereLocalInertia);
+
+	sphereTransform.setOrigin(btVector3(spherePosition.x, spherePosition.y, spherePosition.z));
+
+	//Rigid Body
+	btMotionState* sphereMotionState = new btDefaultMotionState(sphereTransform);
+	btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereMotionState, sphereShape, sphereLocalInertia);
+	btRigidBody* sphereBody = new btRigidBody(sphereInfo);
+
+	dynamicWorld->addRigidBody(sphereBody);
+	sphereGO->SetRigidBody(sphereBody);
+
+
+
 	Timer timer;
 	timer.Start();
 
@@ -269,6 +288,8 @@ int main(int argc, char ** argsv)
 		}
 
 		timer.Update();
+
+		dynamicWorld->stepSimulation(timer.GetDeltaTime(), 10);
 
 		if (startMorph)
 		{
@@ -335,6 +356,9 @@ int main(int argc, char ** argsv)
 	{
 		if ((*iter))
 		{
+			btRigidBody * rb = (*iter)->GetRigidBody();
+			dynamicWorld->removeRigidBody(rb);
+			
 			delete (*iter);
 			iter = GameObjectList.erase(iter);
 		}
@@ -347,6 +371,13 @@ int main(int argc, char ** argsv)
 	{
 		delete postProcessShader;
 	}
+
+	delete dynamicWorld;
+	delete solver;
+	delete overlappingPairCache;
+	delete dispatcher;
+	delete collisionConfig;
+
 	glDeleteVertexArrays(1, &screenVAO);
 	glDeleteBuffers(1, &screenQuadVB);
 	glDeleteFramebuffers(1, &framebufferID);

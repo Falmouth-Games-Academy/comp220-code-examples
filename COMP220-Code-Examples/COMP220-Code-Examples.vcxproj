@@ -179,6 +179,7 @@ copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OutDir)\assimp-vc1
   <ItemGroup>
     <None Include="blinnPhongFrag.glsl" />
     <None Include="blinnPhongVert.glsl" />
+    <None Include="cube.nff" />
     <None Include="frag.glsl">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>
@@ -188,6 +189,7 @@ copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OutDir)\assimp-vc1
     <None Include="parallaxMappingFrag.glsl" />
     <None Include="parallaxMappingVert.glsl" />
     <None Include="passThruVert.glsl" />
+    <None Include="postBlackAndWhiteFrag.glsl" />
     <None Include="postFrag.glsl" />
     <None Include="sphere.nff" />
     <None Include="texturedFrag.glsl" />

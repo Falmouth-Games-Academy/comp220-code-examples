@@ -79,5 +79,7 @@
     <None Include="morphTargetVert.glsl" />
     <None Include="passThruVert.glsl" />
     <None Include="postFrag.glsl" />
+    <None Include="cube.nff" />
+    <None Include="postBlackAndWhiteFrag.glsl" />
   </ItemGroup>
 </Project>
