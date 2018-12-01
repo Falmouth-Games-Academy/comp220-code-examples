@@ -18,10 +18,7 @@
 #include "Light.h"
 #include "Timer.h"
 #include "GameObject.h"
-
-//Debugging Physics
-//https://stackoverflow.com/questions/14008295/how-to-implement-the-btidebugdraw-interface-of-bullet-in-opengl-4-0
-//https://github.com/kripken/bullet/blob/master/Demos/OpenGL/GLDebugDrawer.cpp
+#include "OpenGLBulletDebugDrawer.h"
 
 int main(int argc, char ** argsv)
 {
@@ -207,6 +204,11 @@ int main(int argc, char ** argsv)
 	//Create Physics World
 	btDiscreteDynamicsWorld* dynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfig);
 
+	OpenGLBulletDebugDrawer debugDrawer;
+	debugDrawer.CreateShader();
+	
+	dynamicWorld->setDebugDrawer(&debugDrawer);
+
 	//Create ground shadpe
 	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.0), btScalar(0.5), btScalar(50.0)));
 
@@ -294,6 +296,8 @@ int main(int argc, char ** argsv)
 		timer.Update();
 
 		dynamicWorld->stepSimulation(timer.GetDeltaTime(), 10);
+		
+
 
 		if (startMorph)
 		{
@@ -335,6 +339,9 @@ int main(int argc, char ** argsv)
 
 			obj->Render();
 		}
+
+		debugDrawer.SetViewAndProjectMatrix(viewMatrix, projectionMatrix);
+		dynamicWorld->debugDrawWorld();
 
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
