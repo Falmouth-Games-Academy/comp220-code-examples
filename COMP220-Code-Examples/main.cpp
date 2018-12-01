@@ -20,6 +20,7 @@
 #include "GameObject.h"
 #include "OpenGLBulletDebugDrawer.h"
 
+
 int main(int argc, char ** argsv)
 {
 	//Initialises the SDL Library, passing in SDL_INIT_VIDEO to only initialise the video subsystems
@@ -224,6 +225,7 @@ int main(int argc, char ** argsv)
 	btRigidBody* groundBody = new btRigidBody(groundInfo);
 
 	dynamicWorld->addRigidBody(groundBody);
+	groundBody->setUserPointer(groundGO);
 	groundGO->SetRigidBody(groundBody);
 
 	//Create Sphere Shape
@@ -245,7 +247,7 @@ int main(int argc, char ** argsv)
 
 	dynamicWorld->addRigidBody(sphereBody);
 	sphereGO->SetRigidBody(sphereBody);
-
+	sphereBody->setUserPointer(sphereGO);
 
 
 	Timer timer;
@@ -296,6 +298,27 @@ int main(int argc, char ** argsv)
 		timer.Update();
 
 		dynamicWorld->stepSimulation(timer.GetDeltaTime(), 10);
+		//Check for collisions
+		int numCollisionManifolds = dynamicWorld->getDispatcher()->getNumManifolds();
+		//iterate through these
+		for (int i = 0; i < numCollisionManifolds; i++)
+		{
+			//Get the manifold
+			btPersistentManifold* contactManifold = dynamicWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			
+			//Check if we have a contact
+			int numContacts = contactManifold->getNumContacts();
+			if (numContacts>0)
+			{
+				//get the base collision objects
+				const btCollisionObject* collisionObject0 = contactManifold->getBody0();
+				const btCollisionObject* collisionObject1 = contactManifold->getBody1();
+
+				//Grab the Game objects via the user poiner (see object creation above)
+				GameObject * gameObject0 = (GameObject*)collisionObject0->getUserPointer();
+				GameObject * gameObject1 = (GameObject*)collisionObject1->getUserPointer();
+			}
+		}
 		
 
 
