@@ -300,7 +300,65 @@ int main(int argc, char ** argsv)
 					startMorph = true;
 					morphBlendAlpha = 0.0f;
 				}
+			case SDL_MOUSEBUTTONDOWN:
+				if (ev.button.button == SDL_BUTTON_LEFT)
+				{
+
+					http://www.opengl-tutorial.org/miscellaneous/clicking-on-objects/picking-with-a-physics-library/
+					// The ray Start and End positions, in Normalized Device Coordinates (Have you read Tutorial 4 ?)
+					glm::vec4 lRayStart_NDC(
+						((float)ev.button.x / (float)800 - 0.5f) * 2.0f, // [0,1024] -> [-1,1]
+						((float)ev.button.y / (float)640 - 0.5f) * 2.0f, // [0, 768] -> [-1,1]
+						-1.0, // The near plane maps to Z=-1 in Normalized Device Coordinates
+						1.0f
+					);
+
+					glm::vec4 lRayEnd_NDC(
+						((float)ev.button.x / (float)800 - 0.5f) * 2.0f,
+						((float)ev.button.y / (float)640 - 0.5f) * 2.0f,
+						0.0,
+						1.0f
+					);
+
+					// The Projection matrix goes from Camera Space to NDC.
+					// So inverse(ProjectionMatrix) goes from NDC to Camera Space.
+					glm::mat4 InverseProjectionMatrix = glm::inverse(projectionMatrix);
+
+					// The View Matrix goes from World Space to Camera Space.
+					// So inverse(ViewMatrix) goes from Camera Space to World Space.
+					glm::mat4 InverseViewMatrix = glm::inverse(viewMatrix);
+
+					glm::vec4 lRayStart_camera = InverseProjectionMatrix * lRayStart_NDC;    lRayStart_camera /= lRayStart_camera.w;
+					glm::vec4 lRayStart_world = InverseViewMatrix * lRayStart_camera; lRayStart_world /= lRayStart_world.w;
+					glm::vec4 lRayEnd_camera = InverseProjectionMatrix * lRayEnd_NDC;      lRayEnd_camera /= lRayEnd_camera.w;
+					glm::vec4 lRayEnd_world = InverseViewMatrix * lRayEnd_camera;   lRayEnd_world /= lRayEnd_world.w;
+
+					glm::vec3 lRayDir_world(lRayEnd_world - lRayStart_world);
+					lRayDir_world = glm::normalize(lRayDir_world);
+
+					//glm::vec3 out_end = glm::vec3(lRayStart_world) + lRayDir_world * 1000.0f;
+
+					btCollisionWorld::ClosestRayResultCallback RayCallback(
+						btVector3(lRayStart_world.x, lRayStart_world.y, lRayStart_world.z),
+						btVector3(lRayEnd_world.x, lRayEnd_world.y, lRayEnd_world.z)
+					);
+
+					dynamicWorld->rayTest(
+						btVector3(lRayStart_world.x, lRayStart_world.y, lRayStart_world.z),
+						btVector3(lRayEnd_world.x, lRayEnd_world.y, lRayEnd_world.z),
+						RayCallback
+					);
+					
+					if (RayCallback.hasHit())
+					{
+						std::cout << "Hit Something" << std::endl;
+						//Raycallback.m_collisionObject
+					}
+					
+				}
+				break;
 			}
+
 		}
 
 		timer.Update();
