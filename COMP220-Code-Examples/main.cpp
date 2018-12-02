@@ -80,37 +80,6 @@ int main(int argc, char ** argsv)
 
 	glEnable(GL_DEPTH_TEST);
 
-	MeshCollection * boxMeshes = new MeshCollection();
-	loadMeshFromFile("cube.nff", boxMeshes);
-
-	Shader * texturedShader = new Shader();
-	texturedShader->Load("texturedVert.glsl", "texturedFrag.glsl");
-
-	GLuint textureID = loadTextureFromFile("brick_D.png");
-
-	GameObject * groundGO = new GameObject();
-	groundGO->SetPosition(0.0f, -10.0f, -120.0f);
-	groundGO->SetScale(100.0f, 1.0f, 100.0f);
-	groundGO->SetMesh(boxMeshes);
-	groundGO->SetShader(texturedShader);
-	groundGO->SetDiffuseTexture(textureID);
-
-	GameObjectList.push_back(groundGO);
-
-
-	MeshCollection * sphereMeshes = new MeshCollection();
-	loadMeshFromFile("sphere.nff", sphereMeshes);
-
-	Shader * standardShader = new Shader();
-	standardShader->Load("vert.glsl", "frag.glsl");
-
-	GameObject * sphereGO = new GameObject();
-	sphereGO->SetPosition(0.0f, 40.0f, -120.0f);
-	sphereGO->SetMesh(sphereMeshes);
-	sphereGO->SetShader(standardShader);
-
-	GameObjectList.push_back(sphereGO);
-
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 10.0f);
@@ -210,6 +179,25 @@ int main(int argc, char ** argsv)
 	
 	dynamicWorld->setDebugDrawer(&debugDrawer);
 
+
+	MeshCollection * boxMeshes = new MeshCollection();
+	loadMeshFromFile("cube.nff", boxMeshes);
+
+	Shader * texturedShader = new Shader();
+	texturedShader->Load("texturedVert.glsl", "texturedFrag.glsl");
+
+	GLuint textureID = loadTextureFromFile("brick_D.png");
+
+	GameObject * groundGO = new GameObject();
+	groundGO->SetName("Ground");
+	groundGO->SetPosition(0.0f, -10.0f, -120.0f);
+	groundGO->SetScale(100.0f, 1.0f, 100.0f);
+	groundGO->SetMesh(boxMeshes);
+	groundGO->SetShader(texturedShader);
+	groundGO->SetDiffuseTexture(textureID);
+
+	GameObjectList.push_back(groundGO);
+
 	//Create ground shadpe
 	btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.0), btScalar(0.5), btScalar(50.0)));
 
@@ -228,26 +216,46 @@ int main(int argc, char ** argsv)
 	groundBody->setUserPointer(groundGO);
 	groundGO->SetRigidBody(groundBody);
 
-	//Create Sphere Shape
-	btCollisionShape* sphereShape = new btSphereShape(btScalar(1.0));
-	btTransform sphereTransform;
-	sphereTransform.setIdentity();
-	glm::vec3 spherePosition = sphereGO->GetPosition();
+	float startY = 40.0f;
+	for (int i = 0; i < 5; i++) {
+		MeshCollection * sphereMeshes = new MeshCollection();
+		loadMeshFromFile("sphere.nff", sphereMeshes);
 
-	btScalar sphereMass = 1.0;
-	btVector3 sphereLocalInertia = btVector3(0, 0, 0);
-	sphereShape->calculateLocalInertia(sphereMass, sphereLocalInertia);
+		Shader * standardShader = new Shader();
+		standardShader->Load("vert.glsl", "frag.glsl");
 
-	sphereTransform.setOrigin(btVector3(spherePosition.x, spherePosition.y, spherePosition.z));
+		GameObject * sphereGO = new GameObject();
+		sphereGO->SetName("Sphere");
+		sphereGO->SetPosition(0.0f, startY, -120.0f);
+		sphereGO->SetMesh(sphereMeshes);
+		sphereGO->SetShader(standardShader);
 
-	//Rigid Body
-	btMotionState* sphereMotionState = new btDefaultMotionState(sphereTransform);
-	btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereMotionState, sphereShape, sphereLocalInertia);
-	btRigidBody* sphereBody = new btRigidBody(sphereInfo);
+		GameObjectList.push_back(sphereGO);
 
-	dynamicWorld->addRigidBody(sphereBody);
-	sphereGO->SetRigidBody(sphereBody);
-	sphereBody->setUserPointer(sphereGO);
+
+		//Create Sphere Shape
+		btCollisionShape* sphereShape = new btSphereShape(btScalar(1.0));
+		btTransform sphereTransform;
+		sphereTransform.setIdentity();
+		glm::vec3 spherePosition = sphereGO->GetPosition();
+
+		btScalar sphereMass = 1.0;
+		btVector3 sphereLocalInertia = btVector3(0, 0, 0);
+		sphereShape->calculateLocalInertia(sphereMass, sphereLocalInertia);
+
+		sphereTransform.setOrigin(btVector3(spherePosition.x, spherePosition.y, spherePosition.z));
+
+		//Rigid Body
+		btMotionState* sphereMotionState = new btDefaultMotionState(sphereTransform);
+		btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereMotionState, sphereShape, sphereLocalInertia);
+		btRigidBody* sphereBody = new btRigidBody(sphereInfo);
+
+		dynamicWorld->addRigidBody(sphereBody);
+		sphereGO->SetRigidBody(sphereBody);
+		sphereBody->setUserPointer(sphereGO);
+
+		startY += 50.0f;
+	}
 
 
 	Timer timer;
@@ -317,6 +325,14 @@ int main(int argc, char ** argsv)
 				//Grab the Game objects via the user poiner (see object creation above)
 				GameObject * gameObject0 = (GameObject*)collisionObject0->getUserPointer();
 				GameObject * gameObject1 = (GameObject*)collisionObject1->getUserPointer();
+
+				if (gameObject0->GetName() == "Sphere")
+				{
+				}
+				if (gameObject1->GetName() == "Sphere")
+				{
+				}
+
 			}
 		}
 		

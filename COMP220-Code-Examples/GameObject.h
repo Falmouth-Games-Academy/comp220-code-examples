@@ -26,6 +26,13 @@ public:
 	void SetPosition(float x, float y, float z)
 	{
 		Position = glm::vec3(x, y, z);
+		if (RigidBody)
+		{
+			btTransform transform=RigidBody->getCenterOfMassTransform();
+			transform.setOrigin(btVector3(x, y, z));
+			RigidBody->setCenterOfMassTransform(transform);
+			RigidBody->clearForces();
+		}
 	};
 
 	glm::vec3& GetPosition()
@@ -73,6 +80,16 @@ public:
 		return RigidBody;
 	};
 
+	void SetName(const std::string& name)
+	{
+		Name = name;
+	};
+
+	const std::string& GetName()
+	{
+		return Name;
+	};
+
 	void Render();
 
 private:
@@ -99,4 +116,6 @@ private:
 
 	//RigidBody
 	btRigidBody * RigidBody;
+
+	std::string Name;
 };
