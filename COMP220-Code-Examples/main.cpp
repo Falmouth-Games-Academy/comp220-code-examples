@@ -20,6 +20,9 @@
 #include "GameObject.h"
 #include "OpenGLBulletDebugDrawer.h"
 
+#include "imgui.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
 
 int main(int argc, char ** argsv)
 {
@@ -75,6 +78,16 @@ int main(int argc, char ** argsv)
 
 		return 1;
 	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	ImGui_ImplSDL2_InitForOpenGL(window, gl_Context);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
+	// Setup Style
+	ImGui::StyleColorsDark();
 
 	std::vector<GameObject*> GameObjectList;
 
@@ -272,6 +285,7 @@ int main(int argc, char ** argsv)
 		//https://wiki.libsdl.org/SDL_PollEvent
 		while (SDL_PollEvent(&ev))
 		{
+			ImGui_ImplSDL2_ProcessEvent(&ev);
 			//Switch case for every message we are intereted in
 			switch (ev.type)
 			{
@@ -451,6 +465,15 @@ int main(int argc, char ** argsv)
 		glBindVertexArray(screenVAO);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window);
+		ImGui::NewFrame();
+		ImGui::Begin("Hello, world!");
+		ImGui::Text("This is some useful text.");
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		SDL_GL_SwapWindow(window);
 	}
 
@@ -481,6 +504,10 @@ int main(int argc, char ** argsv)
 	delete overlappingPairCache;
 	delete dispatcher;
 	delete collisionConfig;
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 
 	glDeleteVertexArrays(1, &screenVAO);
 	glDeleteBuffers(1, &screenQuadVB);
