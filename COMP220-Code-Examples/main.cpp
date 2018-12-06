@@ -472,8 +472,10 @@ int main(int argc, char ** argsv)
 		ImGui::Text("This is some useful text.");
 		ImGui::End();
 
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		SDL_GL_SwapWindow(window);
 	}
 
