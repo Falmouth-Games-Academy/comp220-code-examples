@@ -333,3 +333,6 @@ ASALocalRun/
 !Libraries/**
 
 Intermediate/
+
+#mac
+.DS_Store
