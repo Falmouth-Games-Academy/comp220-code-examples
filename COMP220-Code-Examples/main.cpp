@@ -3,6 +3,7 @@
 #include <gl\glew.h>
 #include <SDL_opengl.h>
 
+#include "Shader.h"
 
 int main(int argc, char ** argsv)
 {
@@ -67,6 +68,9 @@ int main(int argc, char ** argsv)
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	// Create and compile our GLSL program from the shaders
+	GLuint programID = LoadShaders("BasicVert.glsl", 
+		"BasicFrag.glsl");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -101,6 +105,8 @@ int main(int argc, char ** argsv)
 		glClearColor(1.0f, 0.0f, 0.0f, 1.0f); 
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glUseProgram(programID);
+
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glVertexAttribPointer(
@@ -118,6 +124,7 @@ int main(int argc, char ** argsv)
 		SDL_GL_SwapWindow(window);
 	}
 
+	glDeleteProgram(programID);
 	glDeleteBuffers(1, &vertexBuffer);
 	glDeleteVertexArrays(1, &vertexArray);
 	SDL_GL_DeleteContext(glContext);
