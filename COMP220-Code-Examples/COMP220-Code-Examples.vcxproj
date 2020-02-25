@@ -109,7 +109,7 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.1\lib\x64\*.dll "</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Libraries\SDL2_image-2.0.5\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.10\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\comp220\comp220-code-examples\Libraries\glm;..\Libraries\SDL2_image-2.0.5\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.10\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -158,9 +158,12 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)\*.dll"</Co
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="vert.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicFrag.glsl" />
