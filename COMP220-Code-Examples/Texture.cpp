@@ -42,7 +42,9 @@ GLuint loadTextureFromFile(const std::string& filename)
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, surface->w, surface->h, 0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, 
+		surface->w, surface->h, 0, textureFormat, GL_UNSIGNED_BYTE, 
+		surface->pixels);
 
 
 	SDL_FreeSurface(surface);
