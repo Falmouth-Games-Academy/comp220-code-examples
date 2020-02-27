@@ -109,7 +109,7 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.1\lib\x64\*.dll "</Command>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Libraries\assimp-4.1.0\include;..\Libraries\SDL2_image-2.0.5\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.10\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\glm;..\Libraries\assimp-4.1.0\include;..\Libraries\SDL2_image-2.0.5\include;..\Libraries\glew-2.1.0\include;..\Libraries\SDL2-2.0.10\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -120,7 +120,7 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.1\lib\x64\*.dll "</Command>
     <PostBuildEvent>
       <Command>copy ..\Libraries\glew-2.1.0\bin\Release\x64\glew32.dll "$(OutDir)\glew32.dll"
 copy ..\Libraries\SDL2-2.0.10\lib\x64\SDL2.dll "$(OutDir)\SDL2.dll"
-copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OurDir)\assimp-vc140-mt.dll"
+copy ..\Libraries\assimp-4.1.0\bin\x64\assimp-vc140-mt.dll "$(OutDir)\assimp-vc140-mt.dll"
 xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)\*.dll"
 </Command>
     </PostBuildEvent>
@@ -173,6 +173,7 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)\*.dll"
   <ItemGroup>
     <None Include="BasicFrag.glsl" />
     <None Include="BasicVert.glsl" />
+    <None Include="cube.nff" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -48,5 +48,6 @@
   <ItemGroup>
     <None Include="BasicVert.glsl" />
     <None Include="BasicFrag.glsl" />
+    <None Include="cube.nff" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,10 @@
 #version 330 core
 
-out vec3 color;
+out vec4 colour;
+
+in vec4 vertexColourOut;
 
 void main()
 {
-  color = vec3(1,1,0);
+  colour = vertexColourOut;
 }
