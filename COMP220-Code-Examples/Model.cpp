@@ -47,10 +47,7 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			
 			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
-				currentTextureCoordinates.x,currentTextureCoordinates.y,
-				currentModelNormals.x,currentModelNormals.y,currentModelNormals.z,
-				currentModelTangents.x,currentModelTangents.y,currentModelTangents.z,
-				currentModelBitangents.x,currentModelBitangents.y,currentModelBitangents.z};
+				currentTextureCoordinates.x,currentTextureCoordinates.y};
 
 			vertices.push_back(currentVertex);
 		}
