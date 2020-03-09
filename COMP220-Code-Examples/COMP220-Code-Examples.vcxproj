@@ -175,6 +175,8 @@ xcopy /Y /D /I ..\Libraries\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)\*.dll"
     <None Include="BasicFrag.glsl" />
     <None Include="BasicVert.glsl" />
     <None Include="cube.nff" />
+    <None Include="LightingFrag.glsl" />
+    <None Include="LightingVert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

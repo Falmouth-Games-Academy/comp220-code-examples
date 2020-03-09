@@ -56,8 +56,8 @@ int main(int argc, char ** argsv)
 	glEnable(GL_CULL_FACE);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("BasicVert.glsl", 
-		"BasicFrag.glsl");
+	GLuint programID = LoadShaders("LightingVert.glsl", 
+		"lightingFrag.glsl");
 
 	//**** Begin Model Loading Example 
 	MeshCollection* currentMeshes=new MeshCollection();
@@ -68,6 +68,8 @@ int main(int argc, char ** argsv)
 	GLuint modelLocation = glGetUniformLocation(programID, "model");
 	GLuint viewLocation = glGetUniformLocation(programID, "view");
 	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
+	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
+	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "ambientMaterialColour");
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -82,6 +84,9 @@ int main(int argc, char ** argsv)
 	glm::vec3 position = glm::vec3(0.0f, -5.0f, -50.0f);
 	glm::mat4 model = glm::translate(position);
 
+	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	glm::vec4 ambientMaterialColour = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -122,6 +127,8 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
+		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 
 		currentMeshes->render();
 
