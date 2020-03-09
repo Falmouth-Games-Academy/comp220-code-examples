@@ -61,7 +61,7 @@ int main(int argc, char ** argsv)
 
 	//**** Begin Model Loading Example 
 	MeshCollection* currentMeshes=new MeshCollection();
-	loadMeshCollectionFromFile("Tank6.FBX", currentMeshes);
+	loadMeshCollectionFromFile("2019-20-utah-teapot.fbx", currentMeshes);
 	//**** End Model Loading Example
 
 	//Get Uniform locations
@@ -79,7 +79,7 @@ int main(int argc, char ** argsv)
 	//Calculate our perspective matrix
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1280 / (float)720, 0.1f, 1000.0f);
 
-	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 position = glm::vec3(0.0f, -5.0f, -50.0f);
 	glm::mat4 model = glm::translate(position);
 
 
