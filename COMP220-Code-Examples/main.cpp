@@ -80,8 +80,6 @@ int main(int argc, char ** argsv)
 	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "material.specularPower");
 
 	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
-	
-
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -106,8 +104,8 @@ int main(int argc, char ** argsv)
 	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Materials
-	glm::vec4 ambientMaterialColour = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
-	glm::vec4 diffuseMaterialColour = glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
+	glm::vec4 ambientMaterialColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.54f, 0.80f, 0.43f, 1.0f);
 	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 50.0f;
 
@@ -142,7 +140,7 @@ int main(int argc, char ** argsv)
 			}
 		}
 
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f); 
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 		glClearDepth(1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);

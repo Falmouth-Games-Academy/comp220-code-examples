@@ -15,6 +15,7 @@ out vec4 vertexColourOut;
 out vec2 vertexTextureCoordOut;
 out vec3 vertexNormalsOut;
 out vec3 viewDirection;
+out vec3 worldVertexPosition;
 
 void main()
 {
@@ -27,6 +28,7 @@ void main()
 	vertexNormalsOut=normalize(model*vec4(vertexNormals,0.0f)).xyz;
 
 	viewDirection=normalize(cameraPosition-worldPosition.xyz);
+	worldVertexPosition=worldPosition.xyz;
 
 	gl_Position = mvpMatrix*vec4(vertexPosition,1.0f);
 }
