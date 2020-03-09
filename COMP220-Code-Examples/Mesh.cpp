@@ -49,9 +49,6 @@ void Mesh::copyBufferData(Vertex* pVerts, unsigned int numberOfVerts, unsigned i
 void Mesh::render()
 {
 	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-
 	glDrawElements(GL_TRIANGLES, m_NumberOfIndices, GL_UNSIGNED_INT, (void*)0);
 
 }

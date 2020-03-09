@@ -22,6 +22,10 @@ int main(int argc, char ** argsv)
 		return 1;
 	}
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 	//Create a window, note we have to free the pointer returned using the DestroyWindow Function
 	//https://wiki.libsdl.org/SDL_CreateWindow
 	SDL_Window* window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
@@ -38,9 +42,7 @@ int main(int argc, char ** argsv)
 
 	SDL_GLContext glContext = SDL_GL_CreateContext(window);
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 
 	//Initialize GLEW
 	glewExperimental = GL_TRUE;
@@ -50,6 +52,8 @@ int main(int argc, char ** argsv)
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unable to initialise GLEW", (char*)glewGetErrorString(glewError), NULL);
 	}
 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("BasicVert.glsl", 
@@ -57,7 +61,7 @@ int main(int argc, char ** argsv)
 
 	//**** Begin Model Loading Example 
 	MeshCollection* currentMeshes=new MeshCollection();
-	loadMeshCollectionFromFile("Tank1.FBX", currentMeshes);
+	loadMeshCollectionFromFile("Tank6.FBX", currentMeshes);
 	//**** End Model Loading Example
 
 	//Get Uniform locations
@@ -112,7 +116,7 @@ int main(int argc, char ** argsv)
 		glClearColor(1.0f, 0.0f, 0.0f, 1.0f); 
 		glClearDepth(1.0f);
 
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER);
+		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 		glUseProgram(programID);
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
