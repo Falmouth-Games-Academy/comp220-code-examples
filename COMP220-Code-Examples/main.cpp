@@ -68,8 +68,15 @@ int main(int argc, char ** argsv)
 	GLuint modelLocation = glGetUniformLocation(programID, "model");
 	GLuint viewLocation = glGetUniformLocation(programID, "view");
 	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
+	
 	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
+	GLuint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
+	GLuint lightDirectionLocation = glGetUniformLocation(programID, "lightDirection");
+
 	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "ambientMaterialColour");
+	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
+	
+
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -84,9 +91,17 @@ int main(int argc, char ** argsv)
 	glm::vec3 position = glm::vec3(0.0f, -5.0f, -50.0f);
 	glm::mat4 model = glm::translate(position);
 
+	//Ambient Light Colour
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	//Directional Light
+	glm::vec3 lightDirection = glm::vec3(0.0f, -0.5f, 0.5f);
+
+	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//Materials
 	glm::vec4 ambientMaterialColour = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -128,7 +143,11 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
+		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
+		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
+		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
+
 
 		currentMeshes->render();
 
