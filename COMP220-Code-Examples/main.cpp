@@ -70,14 +70,14 @@ int main(int argc, char ** argsv)
 	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
 	
 	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
-	GLuint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
-	GLuint specularLightColourLocation = glGetUniformLocation(programID, "specularLightColour");
-	GLuint lightDirectionLocation = glGetUniformLocation(programID, "lightDirection");
+	GLuint diffuseLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
+	GLuint specularLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
+	GLuint lightDirectionLocation = glGetUniformLocation(programID, "directionalLight.direction");
 
-	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "ambientMaterialColour");
-	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
-	GLuint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
-	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
+	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "material.ambientColour");
+	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "material.diffuseColour");
+	GLuint specularMaterialColourLocation = glGetUniformLocation(programID, "material.specularColour");
+	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "material.specularPower");
 
 	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 	
