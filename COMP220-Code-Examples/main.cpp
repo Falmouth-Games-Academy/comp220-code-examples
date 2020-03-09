@@ -71,10 +71,15 @@ int main(int argc, char ** argsv)
 	
 	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
 	GLuint diffuseLightColourLocation = glGetUniformLocation(programID, "diffuseLightColour");
+	GLuint specularLightColourLocation = glGetUniformLocation(programID, "specularLightColour");
 	GLuint lightDirectionLocation = glGetUniformLocation(programID, "lightDirection");
 
 	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "ambientMaterialColour");
 	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "diffuseMaterialColour");
+	GLuint specularMaterialColourLocation = glGetUniformLocation(programID, "specularMaterialColour");
+	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "specularMaterialPower");
+
+	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 	
 
 
@@ -98,10 +103,14 @@ int main(int argc, char ** argsv)
 	glm::vec3 lightDirection = glm::vec3(0.0f, -0.5f, 0.5f);
 
 	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Materials
 	glm::vec4 ambientMaterialColour = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
 	glm::vec4 diffuseMaterialColour = glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
+	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	float specularMaterialPower = 50.0f;
+
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -144,9 +153,13 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
 		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
+		glUniform4fv(specularLightColourLocation, 1, glm::value_ptr(specularLightColour));
 		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
+		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
+		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
+		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
 
 		currentMeshes->render();

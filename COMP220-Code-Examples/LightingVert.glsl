@@ -9,17 +9,24 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec3 cameraPosition;
+
 out vec4 vertexColourOut;
 out vec2 vertexTextureCoordOut;
 out vec3 vertexNormalsOut;
+out vec3 viewDirection;
 
 void main()
 {
 	mat4 mvpMatrix=projection*view*model;
 
+	vec4 worldPosition=model*vec4(vertexPosition,1.0f);
+
 	vertexColourOut=vertexColour;
 	vertexTextureCoordOut=vertexTextureCoord;
 	vertexNormalsOut=normalize(model*vec4(vertexNormals,0.0f)).xyz;
+
+	viewDirection=normalize(cameraPosition-worldPosition.xyz);
 
 	gl_Position = mvpMatrix*vec4(vertexPosition,1.0f);
 }
