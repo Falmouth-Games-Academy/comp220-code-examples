@@ -70,9 +70,16 @@ int main(int argc, char ** argsv)
 	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
 	
 	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
-	GLuint diffuseLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
-	GLuint specularLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
+
+	GLuint diffuseDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
+	GLuint specularDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
 	GLuint lightDirectionLocation = glGetUniformLocation(programID, "directionalLight.direction");
+
+
+	GLuint diffusePointLightColourLocation = glGetUniformLocation(programID, "pointLight.diffuseColour");
+	GLuint specularPointLightColourLocation = glGetUniformLocation(programID, "pointLight.specularColour");
+	GLuint pointLightPositionLocation = glGetUniformLocation(programID, "pointLight.position");
+
 
 	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "material.ambientColour");
 	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "material.diffuseColour");
@@ -99,13 +106,20 @@ int main(int argc, char ** argsv)
 
 	//Directional Light
 	glm::vec3 lightDirection = glm::vec3(0.0f, -0.5f, 0.5f);
+	glm::vec4 diffuseDirectionalLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 specularDirectionalLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glm::vec4 diffuseLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec4 specularLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	//Point Light
+	glm::vec3 lightPosition=glm::vec3(0.0f, 5.0f, -30.0f);
+	glm::vec4 diffusePointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec4 specularPointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
 
 	//Materials
 	glm::vec4 ambientMaterialColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	glm::vec4 diffuseMaterialColour = glm::vec4(0.54f, 0.80f, 0.43f, 1.0f);
+	glm::vec4 diffuseMaterialColour = glm::vec4(0.519f, 0.848f, 0.746f,1.0f );
 	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 50.0f;
 
@@ -149,14 +163,23 @@ int main(int argc, char ** argsv)
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
-		glUniform4fv(diffuseLightColourLocation, 1, glm::value_ptr(diffuseLightColour));
-		glUniform4fv(specularLightColourLocation, 1, glm::value_ptr(specularLightColour));
+
+		glUniform4fv(diffuseDirectionalLightColourLocation, 1, glm::value_ptr(diffuseDirectionalLightColour));
+		glUniform4fv(specularDirectionalLightColourLocation, 1, glm::value_ptr(specularDirectionalLightColour));
 		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
+
+
+		glUniform4fv(diffusePointLightColourLocation, 1, glm::value_ptr(diffusePointLightColour));
+		glUniform4fv(specularPointLightColourLocation, 1, glm::value_ptr(specularPointLightColour));
+		glUniform3fv(pointLightPositionLocation, 1, glm::value_ptr(lightPosition));
+
 		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
 		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
 		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
 		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
+		
 		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
 
