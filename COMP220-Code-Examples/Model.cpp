@@ -24,6 +24,8 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 			aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
 			aiVector3D currentNormals = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelTangents = aiVector3D(0.0f, 0.0f, 0.0f);
+			aiVector3D currentModelBitangents = aiVector3D(0.0f, 0.0f, 0.0f);
 
 			if (currentMesh->HasVertexColors(0))
 			{
@@ -37,11 +39,18 @@ bool loadModelFromFile(const std::string& filename, GLuint VBO, GLuint EBO, unsi
 			{
 				currentNormals = currentMesh->mNormals[v];
 			}
+			if (currentMesh->HasTangentsAndBitangents())
+			{
+				currentModelTangents = currentMesh->mTangents[v];
+				currentModelBitangents = currentMesh->mBitangents[v];
+			}
 			
 			Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 				currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
 				currentTextureCoordinates.x,currentTextureCoordinates.y,
-				currentNormals.x,currentNormals.y,currentNormals.z};
+				currentNormals.x,currentNormals.y,currentNormals.z,
+				currentModelTangents.x,currentModelTangents.y,currentModelTangents.z,
+				currentModelBitangents.x,currentModelBitangents.y,currentModelBitangents.z };
 
 			vertices.push_back(currentVertex);
 		}
@@ -99,6 +108,8 @@ bool loadMeshCollectionFromFile(const std::string& filename, MeshCollection* pMe
 				aiColor4D currentModelColour = aiColor4D(1.0, 1.0, 1.0, 1.0);
 				aiVector3D currentTextureCoordinates = aiVector3D(0.0f, 0.0f, 0.0f);
 				aiVector3D currentNormals = aiVector3D(0.0f, 0.0f, 0.0f);
+				aiVector3D currentModelTangents = aiVector3D(0.0f, 0.0f, 0.0f);
+				aiVector3D currentModelBitangents = aiVector3D(0.0f, 0.0f, 0.0f);
 
 				if (currentMesh->HasVertexColors(0))
 				{
@@ -112,11 +123,18 @@ bool loadMeshCollectionFromFile(const std::string& filename, MeshCollection* pMe
 				{
 					currentNormals = currentMesh->mNormals[v];
 				}
+				if (currentMesh->HasTangentsAndBitangents())
+				{
+					currentModelTangents = currentMesh->mTangents[v];
+					currentModelBitangents = currentMesh->mBitangents[v];
+				}
 
 				Vertex currentVertex = { currentModelVertex.x,currentModelVertex.y,currentModelVertex.z,
 					currentModelColour.r,currentModelColour.g,currentModelColour.b,currentModelColour.a,
 					currentTextureCoordinates.x,currentTextureCoordinates.y,
-					currentNormals.x,currentNormals.y,currentNormals.z };
+					currentNormals.x,currentNormals.y,currentNormals.z,
+					currentModelTangents.x,currentModelTangents.y,currentModelTangents.z,
+					currentModelBitangents.x,currentModelBitangents.y,currentModelBitangents.z };
 
 				vertices.push_back(currentVertex);
 			}

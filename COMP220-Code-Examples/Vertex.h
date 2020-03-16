@@ -6,4 +6,6 @@ struct Vertex
 	float r, g, b, a;
 	float tu, tv;
 	float xNormal, yNormal, zNormal;
+	float tangentX, tangentY, tangentZ;
+	float biTangentX, biTangentY, biTangentZ;
 };
