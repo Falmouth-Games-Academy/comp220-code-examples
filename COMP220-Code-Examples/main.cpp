@@ -9,6 +9,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Vertex.h"
+#include "Texture.h"
 
 int main(int argc, char ** argsv)
 {
@@ -88,6 +89,8 @@ int main(int argc, char ** argsv)
 
 	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 
+	GLuint albedoTextureLocation = glGetUniformLocation(programID, "albedoTexture");
+
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
 	glm::vec3 cameraLook = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -116,13 +119,15 @@ int main(int argc, char ** argsv)
 	glm::vec4 specularPointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
-
 	//Materials
 	glm::vec4 ambientMaterialColour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	glm::vec4 diffuseMaterialColour = glm::vec4(0.519f, 0.848f, 0.746f,1.0f );
 	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 50.0f;
 
+	//Textures
+	glActiveTexture(GL_TEXTURE0);
+	GLuint albedoTextureID = loadTextureFromFile("brick_D.png");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -182,6 +187,8 @@ int main(int argc, char ** argsv)
 		
 		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
+		glUniform1i(albedoTextureLocation, 0);
+
 
 		currentMeshes->render();
 
@@ -193,6 +200,8 @@ int main(int argc, char ** argsv)
 	{
 		delete currentMeshes;
 	}
+
+	glDeleteTextures(1, &albedoTextureID);
 
 	glDeleteProgram(programID);
 	SDL_GL_DeleteContext(glContext);

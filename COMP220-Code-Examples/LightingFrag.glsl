@@ -40,6 +40,8 @@ uniform PointLight pointLight;
 
 uniform Material material;
 
+uniform sampler2D albedoTexture;
+
 vec4 CalculateLightColour(vec4 diffuseLightColour,vec4 specularLightColour,vec3 lightDirection)
 {
     //Lambert Diffuse
@@ -49,7 +51,9 @@ vec4 CalculateLightColour(vec4 diffuseLightColour,vec4 specularLightColour,vec3 
     vec3 halfWay=normalize(lightDirection+viewDirection);
     float nDoth=pow(clamp(dot(vertexNormalsOut,halfWay),0.0,1.0),material.specularPower);
 
-    return (diffuseLightColour*nDotl*material.diffuseColour)
+    vec4 albedo = texture(albedoTexture,vertexTextureCoordOut);
+
+    return (diffuseLightColour*nDotl*material.diffuseColour*albedo)
                 +(specularLightColour*nDoth*material.specularColour);
 }
 
