@@ -90,6 +90,7 @@ int main(int argc, char ** argsv)
 	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 
 	GLuint albedoTextureLocation = glGetUniformLocation(programID, "albedoTexture");
+	GLuint specTextureLocation = glGetUniformLocation(programID, "specTexture");
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -128,6 +129,9 @@ int main(int argc, char ** argsv)
 	//Textures
 	glActiveTexture(GL_TEXTURE0);
 	GLuint albedoTextureID = loadTextureFromFile("brick_D.png");
+
+	glActiveTexture(GL_TEXTURE1);
+	GLuint specTextureID = loadTextureFromFile("spot_S.png");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -188,7 +192,7 @@ int main(int argc, char ** argsv)
 		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
 		glUniform1i(albedoTextureLocation, 0);
-
+		glUniform1i(specTextureLocation, 1);
 
 		currentMeshes->render();
 
