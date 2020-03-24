@@ -56,42 +56,92 @@ int main(int argc, char ** argsv)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+
+	//Post processing setup
+	GLuint postTextureID = CreateTexture(1280, 720);
+
+	GLuint depthBufferID;
+	glGenRenderbuffers(1, &depthBufferID);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1280, 720);
+
+	GLuint frameBufferID;
+	glGenFramebuffers(1, &frameBufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, postTextureID, 0);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		//error message
+	}
+
+	//Create quad to support post processing
+	float vertices[] =
+	{
+		-1,	-1,
+		1,	-1,
+		-1,  1,
+		1,   1,
+	};
+
+	GLuint screenVBO;
+	glGenBuffers(1, &screenVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertices, GL_STATIC_DRAW);
+
+	GLuint screenVAO;
+	glGenVertexArrays(1, &screenVAO);
+	glBindVertexArray(screenVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	GLuint postProcessingProgramID = LoadShaders("passThruVert.glsl", "postFrag.glsl");
+	GLuint texxture0Location = glGetUniformLocation(postProcessingProgramID,"texture0");
+
+
+
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("ParallaxMappingVert.glsl", 
 		"ParallaxMappingFrag.glsl");
-
-	//GLuint programID = LoadShaders("LightingVert.glsl",
-	//	"LightingFrag.glsl");
 
 	//**** Begin Model Loading Example 
 	MeshCollection* currentMeshes=new MeshCollection();
 	loadMeshCollectionFromFile("2019-20-utah-teapot.fbx", currentMeshes);
 	//**** End Model Loading Example
 
-	//Get Uniform locations
+	//Get Uniform locations - Matrices
 	GLuint modelLocation = glGetUniformLocation(programID, "model");
 	GLuint viewLocation = glGetUniformLocation(programID, "view");
 	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
 	
+	//Get Uniform locations - Ambient Light
 	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
 
+	//Get Uniform locations - Directional Light
 	GLuint diffuseDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
 	GLuint specularDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
 	GLuint lightDirectionLocation = glGetUniformLocation(programID, "directionalLight.direction");
 
-
+	////Get Uniform locations - Point Light
 	GLuint diffusePointLightColourLocation = glGetUniformLocation(programID, "pointLight.diffuseColour");
 	GLuint specularPointLightColourLocation = glGetUniformLocation(programID, "pointLight.specularColour");
 	GLuint pointLightPositionLocation = glGetUniformLocation(programID, "pointLight.position");
 
-
+	//Get Uniform locations - Materials
 	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "material.ambientColour");
 	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "material.diffuseColour");
 	GLuint specularMaterialColourLocation = glGetUniformLocation(programID, "material.specularColour");
 	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "material.specularPower");
 
+	//Get Uniform locations - Camera
 	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
 
+	//Get Uniform locations - Textures
 	GLuint albedoTextureLocation = glGetUniformLocation(programID, "albedoTexture");
 	GLuint specTextureLocation = glGetUniformLocation(programID, "specTexture");
 	GLuint normalTextureLocation = glGetUniformLocation(programID, "normalTexture");
@@ -131,7 +181,8 @@ int main(int argc, char ** argsv)
 	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 50.0f;
 
-	//Textures
+	//Load and assign the textures to slots, make note of the
+	//number for sending to shader
 	glActiveTexture(GL_TEXTURE0);
 	GLuint albedoTextureID = loadTextureFromFile("brick_D.png");
 
@@ -174,16 +225,21 @@ int main(int argc, char ** argsv)
 			}
 		}
 
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 		glClearDepth(1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
+		//Bind a shader program
 		glUseProgram(programID);
+
+		//Send Matrices
 		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
 
+		//Send Ambient Light Colour
 		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
 
 		glUniform4fv(diffuseDirectionalLightColourLocation, 1, glm::value_ptr(diffuseDirectionalLightColour));
@@ -209,6 +265,23 @@ int main(int argc, char ** argsv)
 
 		currentMeshes->render();
 
+		glDisable(GL_DEPTH_TEST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		glUseProgram(postProcessingProgramID);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, postTextureID);
+		glUniform1d(texxture0Location, 0);
+
+		//draw quad
+		glBindVertexArray(screenVAO);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+
+
 		SDL_GL_SwapWindow(window);
 	}
 
@@ -221,6 +294,15 @@ int main(int argc, char ** argsv)
 	glDeleteTextures(1, &albedoTextureID);
 
 	glDeleteProgram(programID);
+
+	glDeleteBuffers(1, &screenVBO);
+	glDeleteVertexArrays(1, &screenVAO);
+
+	glDeleteProgram(postProcessingProgramID);
+
+	glDeleteRenderbuffers(1, &depthBufferID);
+	glDeleteTextures(1, &postTextureID);
+	glDeleteFramebuffers(1, &frameBufferID);
 	SDL_GL_DeleteContext(glContext);
 	//Destroy the window and quit SDL2, NB we should do this after all cleanup in this order!!!
 	//https://wiki.libsdl.org/SDL_DestroyWindow

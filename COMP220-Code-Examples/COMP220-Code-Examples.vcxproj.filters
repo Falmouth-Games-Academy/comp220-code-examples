@@ -58,5 +58,7 @@
     <None Include="NormalMappingVert.glsl" />
     <None Include="ParallaxMappingVert.glsl" />
     <None Include="ParallaxMappingFrag.glsl" />
+    <None Include="passThruVert.glsl" />
+    <None Include="postFrag.glsl" />
   </ItemGroup>
 </Project>
