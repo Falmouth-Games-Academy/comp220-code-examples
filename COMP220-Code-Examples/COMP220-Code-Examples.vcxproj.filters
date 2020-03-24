@@ -56,5 +56,7 @@
     <None Include="LightingFrag.glsl" />
     <None Include="NormalMappingFrag.glsl" />
     <None Include="NormalMappingVert.glsl" />
+    <None Include="ParallaxMappingVert.glsl" />
+    <None Include="ParallaxMappingFrag.glsl" />
   </ItemGroup>
 </Project>

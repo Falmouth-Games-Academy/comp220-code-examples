@@ -57,8 +57,8 @@ int main(int argc, char ** argsv)
 	glEnable(GL_CULL_FACE);
 
 	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("NormalMappingVert.glsl", 
-		"NormalMappingFrag.glsl");
+	GLuint programID = LoadShaders("ParallaxMappingVert.glsl", 
+		"ParallaxMappingFrag.glsl");
 
 	//GLuint programID = LoadShaders("LightingVert.glsl",
 	//	"LightingFrag.glsl");
@@ -95,6 +95,7 @@ int main(int argc, char ** argsv)
 	GLuint albedoTextureLocation = glGetUniformLocation(programID, "albedoTexture");
 	GLuint specTextureLocation = glGetUniformLocation(programID, "specTexture");
 	GLuint normalTextureLocation = glGetUniformLocation(programID, "normalTexture");
+	GLuint heightTextureLocation = glGetUniformLocation(programID, "heightTexture");
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -139,6 +140,9 @@ int main(int argc, char ** argsv)
 
 	glActiveTexture(GL_TEXTURE2);
 	GLuint normalTextureID = loadTextureFromFile("brick_N.png");
+
+	glActiveTexture(GL_TEXTURE3);
+	GLuint heightTextureID = loadTextureFromFile("brick_H.png");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
 	bool running = true;
@@ -201,6 +205,7 @@ int main(int argc, char ** argsv)
 		glUniform1i(albedoTextureLocation, 0);
 		glUniform1i(specTextureLocation, 1);
 		glUniform1i(normalTextureLocation, 2);
+		glUniform1i(heightTextureLocation, 3);
 
 		currentMeshes->render();
 
