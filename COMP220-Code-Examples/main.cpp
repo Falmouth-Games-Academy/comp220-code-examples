@@ -58,24 +58,22 @@ int main(int argc, char ** argsv)
 
 
 	//Post processing setup
-	GLuint postTextureID = CreateTexture(1280, 720);
+	GLuint colourBufferID = CreateTexture(1280, 720);
 
-	GLuint depthBufferID;
+	GLuint depthBufferID = 0;
 	glGenRenderbuffers(1, &depthBufferID);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBufferID);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1280, 720);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 1280, 720);
 
-	GLuint frameBufferID;
-	glGenFramebuffers(1, &frameBufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, postTextureID, 0);
-
+	GLuint framebufferID = 0;
+	glGenFramebuffers(1, &framebufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBufferID);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colourBufferID, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		//error message
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Frame Buffer", "Unable to create framebuffer", NULL);
 	}
 
 	//Create quad to support post processing
@@ -87,23 +85,31 @@ int main(int argc, char ** argsv)
 		1,   1,
 	};
 
-	GLuint screenVBO;
-	glGenBuffers(1, &screenVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), vertices, GL_STATIC_DRAW);
+	float screenVerts[] =
+	{
+		-1,-1,
+		1,-1,
+		-1,1,
+		1,1
+	};
 
-	GLuint screenVAO;
+	GLuint screenQuadVB = 0;
+	glGenBuffers(1, &screenQuadVB);
+	glBindBuffer(GL_ARRAY_BUFFER, screenQuadVB);
+	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), screenVerts, GL_STATIC_DRAW);
+
+	GLuint screenVAO = 0;
 	glGenVertexArrays(1, &screenVAO);
 	glBindVertexArray(screenVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, screenQuadVB);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	GLuint postProcessingProgramID = LoadShaders("passThruVert.glsl", "postFrag.glsl");
-	GLuint texxture0Location = glGetUniformLocation(postProcessingProgramID,"texture0");
+	GLuint texture0Location = glGetUniformLocation(postProcessingProgramID,"texture0");
 
-
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("ParallaxMappingVert.glsl", 
@@ -181,18 +187,10 @@ int main(int argc, char ** argsv)
 	glm::vec4 specularMaterialColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float specularMaterialPower = 50.0f;
 
-	//Load and assign the textures to slots, make note of the
-	//number for sending to shader
-	glActiveTexture(GL_TEXTURE0);
+	//Load Textures
 	GLuint albedoTextureID = loadTextureFromFile("brick_D.png");
-
-	glActiveTexture(GL_TEXTURE1);
 	GLuint specTextureID = loadTextureFromFile("spot_S.png");
-
-	glActiveTexture(GL_TEXTURE2);
 	GLuint normalTextureID = loadTextureFromFile("brick_N.png");
-
-	glActiveTexture(GL_TEXTURE3);
 	GLuint heightTextureID = loadTextureFromFile("brick_H.png");
 
 	//Event loop, we will loop until running is set to false, usually if escape has been pressed or window is closed
@@ -225,7 +223,9 @@ int main(int argc, char ** argsv)
 			}
 		}
 
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+		glEnable(GL_DEPTH_TEST);
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 		glClearDepth(1.0f);
 
@@ -258,29 +258,37 @@ int main(int argc, char ** argsv)
 		
 		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
 
+		//Assigning textures to slots and sending to shader
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, albedoTextureID);
 		glUniform1i(albedoTextureLocation, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, specTextureID);
 		glUniform1i(specTextureLocation, 1);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, normalTextureID);
 		glUniform1i(normalTextureLocation, 2);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, heightTextureID);
 		glUniform1i(heightTextureLocation, 3);
 
 		currentMeshes->render();
 
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(postProcessingProgramID);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, postTextureID);
-		glUniform1d(texxture0Location, 0);
+		glBindTexture(GL_TEXTURE_2D, colourBufferID);
+		glUniform1d(texture0Location, 0);
 
 		//draw quad
 		glBindVertexArray(screenVAO);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-
 
 		SDL_GL_SwapWindow(window);
 	}
@@ -295,14 +303,14 @@ int main(int argc, char ** argsv)
 
 	glDeleteProgram(programID);
 
-	glDeleteBuffers(1, &screenVBO);
+	glDeleteBuffers(1, &screenQuadVB);
 	glDeleteVertexArrays(1, &screenVAO);
 
 	glDeleteProgram(postProcessingProgramID);
 
 	glDeleteRenderbuffers(1, &depthBufferID);
-	glDeleteTextures(1, &postTextureID);
-	glDeleteFramebuffers(1, &frameBufferID);
+	glDeleteTextures(1, &colourBufferID);
+	glDeleteFramebuffers(1, &framebufferID);
 	SDL_GL_DeleteContext(glContext);
 	//Destroy the window and quit SDL2, NB we should do this after all cleanup in this order!!!
 	//https://wiki.libsdl.org/SDL_DestroyWindow
