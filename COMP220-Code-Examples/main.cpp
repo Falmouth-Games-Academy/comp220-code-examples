@@ -5,6 +5,7 @@
 #include <glm\glm.hpp>
 #include <glm\gtx\transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
+#include <btBulletDynamicsCommon.h>
 
 #include "Shader.h"
 #include "Model.h"
@@ -57,6 +58,21 @@ int main(int argc, char ** argsv)
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+
+	//init Physics
+	btDefaultCollisionConfiguration* collisionConfig = new btDefaultCollisionConfiguration();
+
+	//Collision Dispatcher
+	btCollisionDispatcher* collisionDispatcher = new btCollisionDispatcher(collisionConfig);
+
+	//Create Broadphase
+	btBroadphaseInterface* broadPhase = new btDbvtBroadphase();
+
+	//Solver
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
+
+	btDiscreteDynamicsWorld* dynamicWorld = new btDiscreteDynamicsWorld(collisionDispatcher, broadPhase, solver, collisionConfig);
 
 
 	//Post processing setup
@@ -141,10 +157,30 @@ int main(int argc, char ** argsv)
 	glm::vec4 diffusePointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec4 specularPointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	//Create Visuals
 	GameObject* teapot = new GameObject();
 	teapot->Init();
 	teapot->LoadMesh("2019-20-utah-teapot.fbx");
 	teapot->SetPosition(0.0f, -5.0f, -50.0f);
+
+	//Create Physics representation
+	btCollisionShape* sphereShape = new btSphereShape(1.0f);
+	
+	btTransform sphereTransform;
+	sphereTransform.setIdentity();
+	sphereTransform.setOrigin(btVector3(0.0f, -5.0f, -50.0f));
+
+	btScalar sphereMass = 1.0;
+	btVector3 sphereLocalInertia = btVector3(0, 0, 0);
+	sphereShape->calculateLocalInertia(sphereMass, sphereLocalInertia);
+
+	//RigidBody
+	btMotionState* sphereMotionState = new btDefaultMotionState(sphereTransform);
+	btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereMotionState, sphereShape, sphereLocalInertia);
+	btRigidBody* sphereBody = new btRigidBody(sphereInfo);
+
+	dynamicWorld->addRigidBody(sphereBody);
+
 
 
 	//Materials
@@ -188,6 +224,13 @@ int main(int argc, char ** argsv)
 				}
 			}
 		}
+
+		dynamicWorld->stepSimulation(0.3f, 10);
+
+		btTransform currentTransform;
+		btMotionState* currentMotionState = sphereBody->getMotionState();
+		currentMotionState->getWorldTransform(currentTransform);
+		teapot->SetPosition(currentTransform.getOrigin().x(), currentTransform.getOrigin().y(), currentTransform.getOrigin().z());
 
 		teapot->Update();
 
@@ -285,6 +328,40 @@ int main(int argc, char ** argsv)
 	glDeleteRenderbuffers(1, &depthBufferID);
 	glDeleteTextures(1, &colourBufferID);
 	glDeleteFramebuffers(1, &framebufferID);
+
+	//delete physics
+	dynamicWorld->removeRigidBody(sphereBody);
+	if (sphereBody)
+	{
+		delete sphereBody;
+		sphereBody = nullptr;
+	}
+	if (dynamicWorld)
+	{
+		delete dynamicWorld;
+		dynamicWorld = nullptr;
+	}
+	if (solver)
+	{
+		delete solver;
+		solver = nullptr;
+	}
+	if (broadPhase)
+	{
+		delete broadPhase;
+		broadPhase = nullptr;
+	}
+	if (collisionDispatcher)
+	{
+		delete collisionDispatcher;
+		collisionDispatcher = nullptr;
+	}
+	if (collisionConfig)
+	{
+		delete collisionConfig;
+		collisionConfig = nullptr;
+	}
+
 	SDL_GL_DeleteContext(glContext);
 	//Destroy the window and quit SDL2, NB we should do this after all cleanup in this order!!!
 	//https://wiki.libsdl.org/SDL_DestroyWindow
