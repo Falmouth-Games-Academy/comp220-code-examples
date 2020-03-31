@@ -10,6 +10,8 @@
 #include "Model.h"
 #include "Vertex.h"
 #include "Texture.h"
+#include "GameObject.h"
+#include "Shader.h"
 
 int main(int argc, char ** argsv)
 {
@@ -111,47 +113,9 @@ int main(int argc, char ** argsv)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// Create and compile our GLSL program from the shaders
-	GLuint programID = LoadShaders("ParallaxMappingVert.glsl", 
-		"ParallaxMappingFrag.glsl");
 
-	//**** Begin Model Loading Example 
-	MeshCollection* currentMeshes=new MeshCollection();
-	loadMeshCollectionFromFile("2019-20-utah-teapot.fbx", currentMeshes);
-	//**** End Model Loading Example
-
-	//Get Uniform locations - Matrices
-	GLuint modelLocation = glGetUniformLocation(programID, "model");
-	GLuint viewLocation = glGetUniformLocation(programID, "view");
-	GLuint projectionLocation = glGetUniformLocation(programID, "projection");
-	
-	//Get Uniform locations - Ambient Light
-	GLuint ambientLightColourLocation = glGetUniformLocation(programID, "ambientLightColour");
-
-	//Get Uniform locations - Directional Light
-	GLuint diffuseDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.diffuseColour");
-	GLuint specularDirectionalLightColourLocation = glGetUniformLocation(programID, "directionalLight.specularColour");
-	GLuint lightDirectionLocation = glGetUniformLocation(programID, "directionalLight.direction");
-
-	////Get Uniform locations - Point Light
-	GLuint diffusePointLightColourLocation = glGetUniformLocation(programID, "pointLight.diffuseColour");
-	GLuint specularPointLightColourLocation = glGetUniformLocation(programID, "pointLight.specularColour");
-	GLuint pointLightPositionLocation = glGetUniformLocation(programID, "pointLight.position");
-
-	//Get Uniform locations - Materials
-	GLuint ambientMaterialColourLocation = glGetUniformLocation(programID, "material.ambientColour");
-	GLuint diffuseMaterialColourLocation = glGetUniformLocation(programID, "material.diffuseColour");
-	GLuint specularMaterialColourLocation = glGetUniformLocation(programID, "material.specularColour");
-	GLuint specularMaterialPowerLocation = glGetUniformLocation(programID, "material.specularPower");
-
-	//Get Uniform locations - Camera
-	GLuint cameraPositionLocation = glGetUniformLocation(programID, "cameraPosition");
-
-	//Get Uniform locations - Textures
-	GLuint albedoTextureLocation = glGetUniformLocation(programID, "albedoTexture");
-	GLuint specTextureLocation = glGetUniformLocation(programID, "specTexture");
-	GLuint normalTextureLocation = glGetUniformLocation(programID, "normalTexture");
-	GLuint heightTextureLocation = glGetUniformLocation(programID, "heightTexture");
+	Shader* parallaxMapping = new Shader();
+	parallaxMapping->Load("ParallaxMappingVert.glsl", "ParallaxMappingFrag.glsl");
 
 	//Set up vectors for our camera position
 	glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -162,9 +126,6 @@ int main(int argc, char ** argsv)
 	glm::mat4 view = glm::lookAt(cameraPosition, cameraLook, cameraUp);
 	//Calculate our perspective matrix
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)1280 / (float)720, 0.1f, 1000.0f);
-
-	glm::vec3 position = glm::vec3(0.0f, -5.0f, -50.0f);
-	glm::mat4 model = glm::translate(position);
 
 	//Ambient Light Colour
 	glm::vec4 ambientLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -179,6 +140,11 @@ int main(int argc, char ** argsv)
 	glm::vec3 lightPosition=glm::vec3(0.0f, 5.0f, -30.0f);
 	glm::vec4 diffusePointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec4 specularPointLightColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	GameObject* teapot = new GameObject();
+	teapot->Init();
+	teapot->LoadMesh("2019-20-utah-teapot.fbx");
+	teapot->SetPosition(0.0f, -5.0f, -50.0f);
 
 
 	//Materials
@@ -223,6 +189,8 @@ int main(int argc, char ** argsv)
 			}
 		}
 
+		teapot->Update();
+
 		glEnable(GL_DEPTH_TEST);
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebufferID);
@@ -232,47 +200,48 @@ int main(int argc, char ** argsv)
 		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
 		//Bind a shader program
-		glUseProgram(programID);
+		//glUseProgram(programID);
+		parallaxMapping->Bind();
 
 		//Send Matrices
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(parallaxMapping->GetUniform("model"), 1, GL_FALSE, glm::value_ptr(teapot->GetMatModel()));
+		glUniformMatrix4fv(parallaxMapping->GetUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+		glUniformMatrix4fv(parallaxMapping->GetUniform("projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 		//Send Ambient Light Colour
-		glUniform4fv(ambientLightColourLocation, 1, glm::value_ptr(ambientLightColour));
+		glUniform4fv(parallaxMapping->GetUniform("ambientLightColour"), 1, glm::value_ptr(ambientLightColour));
 
-		glUniform4fv(diffuseDirectionalLightColourLocation, 1, glm::value_ptr(diffuseDirectionalLightColour));
-		glUniform4fv(specularDirectionalLightColourLocation, 1, glm::value_ptr(specularDirectionalLightColour));
-		glUniform3fv(lightDirectionLocation, 1, glm::value_ptr(lightDirection));
+		glUniform4fv(parallaxMapping->GetUniform("directionalLight.diffuseColour"), 1, glm::value_ptr(diffuseDirectionalLightColour));
+		glUniform4fv(parallaxMapping->GetUniform("directionalLight.specularColour"), 1, glm::value_ptr(specularDirectionalLightColour));
+		glUniform3fv(parallaxMapping->GetUniform("directionalLight.direction"), 1, glm::value_ptr(lightDirection));
 
+		glUniform4fv(parallaxMapping->GetUniform("pointLight.diffuseColou"), 1, glm::value_ptr(diffusePointLightColour));
+		glUniform4fv(parallaxMapping->GetUniform("pointLight.specularColour"), 1, glm::value_ptr(specularPointLightColour));
+		glUniform3fv(parallaxMapping->GetUniform("pointLight.position"), 1, glm::value_ptr(lightPosition));
 
-		glUniform4fv(diffusePointLightColourLocation, 1, glm::value_ptr(diffusePointLightColour));
-		glUniform4fv(specularPointLightColourLocation, 1, glm::value_ptr(specularPointLightColour));
-		glUniform3fv(pointLightPositionLocation, 1, glm::value_ptr(lightPosition));
-
-		glUniform4fv(ambientMaterialColourLocation, 1, glm::value_ptr(ambientMaterialColour));
-		glUniform4fv(diffuseMaterialColourLocation, 1, glm::value_ptr(diffuseMaterialColour));
-		glUniform4fv(specularMaterialColourLocation, 1, glm::value_ptr(specularMaterialColour));
-		glUniform1f(specularMaterialPowerLocation, specularMaterialPower);
+		glUniform4fv(parallaxMapping->GetUniform("material.ambientColour"), 1, glm::value_ptr(ambientMaterialColour));
+		glUniform4fv(parallaxMapping->GetUniform("material.diffuseColour"), 1, glm::value_ptr(diffuseMaterialColour));
+		glUniform4fv(parallaxMapping->GetUniform("material.specularColour"), 1, glm::value_ptr(specularMaterialColour));
+		glUniform1f(parallaxMapping->GetUniform("material.specularPower"), specularMaterialPower);
 		
-		glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(cameraPosition));
+		glUniform3fv(parallaxMapping->GetUniform("cameraPosition"), 1, glm::value_ptr(cameraPosition));
 
 		//Assigning textures to slots and sending to shader
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, albedoTextureID);
-		glUniform1i(albedoTextureLocation, 0);
+		glUniform1i(parallaxMapping->GetUniform("albedoTexture"), 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, specTextureID);
-		glUniform1i(specTextureLocation, 1);
+		glUniform1i(parallaxMapping->GetUniform("specTexture"), 1);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, normalTextureID);
-		glUniform1i(normalTextureLocation, 2);
+		glUniform1i(parallaxMapping->GetUniform("normalTexture"), 2);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, heightTextureID);
-		glUniform1i(heightTextureLocation, 3);
+		glUniform1i(parallaxMapping->GetUniform("heightTexture"), 3);
 
-		currentMeshes->render();
+
+		teapot->Render();
 
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -293,15 +262,20 @@ int main(int argc, char ** argsv)
 		SDL_GL_SwapWindow(window);
 	}
 
-	currentMeshes->destroy();
-	if (currentMeshes)
+	if (teapot)
 	{
-		delete currentMeshes;
+		teapot->Destroy();
+		delete teapot;
+		teapot = nullptr;
 	}
 
 	glDeleteTextures(1, &albedoTextureID);
 
-	glDeleteProgram(programID);
+	if (parallaxMapping)
+	{
+		delete parallaxMapping;
+		parallaxMapping = nullptr;
+	}
 
 	glDeleteBuffers(1, &screenQuadVB);
 	glDeleteVertexArrays(1, &screenVAO);
