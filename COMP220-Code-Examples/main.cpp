@@ -53,11 +53,16 @@ int main(int argc, char ** argsv)
 
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat vertices[] = {
-	   -1.0f, -1.0f, 0.0f,
-	   1.0f, -1.0f, 0.0f,
-	   0.0f,  1.0f, 0.0f,
+	   -0.75f, -0.75f, 0.0f,
+		0.75f, -0.75f, 0.0f,
+		0.75f,  0.75f, 0.0f,
+		-0.75f, 0.75f, 0.0f
 	};
 
+	static const GLuint elements[] = {
+		0, 1, 2,	// first triangle
+		2, 3, 0		// second triangle
+	};
 
 	// This will identify our vertex buffer
 	GLuint vertexBuffer;
@@ -67,6 +72,22 @@ int main(int argc, char ** argsv)
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glVertexAttribPointer(
+		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+		3,                  // size
+		GL_FLOAT,           // type
+		GL_FALSE,           // normalized?
+		0,                  // stride
+		(void*)0            // array buffer offset
+	);
+
+	GLuint elementbuffer;
+	glGenBuffers(1, &elementbuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
 	// Create and compile our GLSL program from the shaders
 	GLuint programID = LoadShaders("BasicVert.glsl", 
@@ -107,19 +128,13 @@ int main(int argc, char ** argsv)
 
 		glUseProgram(programID);
 
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glVertexAttribPointer(
-			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-			3,                  // size
-			GL_FLOAT,           // type
-			GL_FALSE,           // normalized?
-			0,                  // stride
-			(void*)0            // array buffer offset
+		// Draw the square !
+		glDrawElements(
+			GL_TRIANGLES,      // mode
+			6,				   // count
+			GL_UNSIGNED_INT,   // type
+			(void*)0           // element array buffer offset
 		);
-		// Draw the triangle !
-		glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-		glDisableVertexAttribArray(0);
 
 		SDL_GL_SwapWindow(window);
 	}
